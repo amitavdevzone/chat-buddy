@@ -1,8 +1,8 @@
 import { ChevronDown } from 'lucide-react';
 import { useState } from 'react';
 
-export default function ConversationTopbar({ tools, models }: { tools: string[]; models: string[] }) {
-    const [selectedModel, setSelectedModel] = useState('GPT-4');
+export default function ConversationTopbar({ tools, models, defaultModel }: { tools: string[]; models: string[]; defaultModel: string }) {
+    const [selectedModel, setSelectedModel] = useState(defaultModel);
     const [selectedTool, setSelectedTool] = useState<string | null>(null);
 
     return (

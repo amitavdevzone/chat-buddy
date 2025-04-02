@@ -11,10 +11,12 @@ class ConversationController extends Controller
     {
         $models = ['GPT-4', 'GPT-3.5', 'Custom', 'Claude', 'Bard', 'Gemini'];
         $tools = ['Web Search', 'Research'];
+        $defaultModel = ['Bard'];
 
         return Inertia::render('chat/index', [
             'models' => $models,
             'tools' => $tools,
+            'defaultModel' => $defaultModel,
         ]);
     }
 }
