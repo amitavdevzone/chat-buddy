@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function ChatArea() {
+export default function ChatArea({ handleUserMessage }: { handleUserMessage: (message: string) => void }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [message, setMessage] = useState('');
 
@@ -13,7 +13,7 @@ export default function ChatArea() {
     }, [message]);
 
     return (
-        <div className="flex flex-1 flex-col">
+        <>
             <div className="flex-1 space-y-4 overflow-y-auto p-6">
                 <div className="max-w-xl rounded bg-gray-200 p-4 dark:bg-gray-700">
                     <p>
@@ -37,9 +37,11 @@ export default function ChatArea() {
                         rows={1}
                         className="flex-1 resize-none rounded bg-gray-100 p-3 text-sm outline-none dark:bg-gray-700"
                     />
-                    <button className="ml-3 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">Send</button>
+                    <button onClick={() => handleUserMessage(message)} className="ml-3 rounded bg-blue-600 px-4 py-2 text-white hover:bg-blue-700">
+                        Send
+                    </button>
                 </div>
             </div>
-        </div>
+        </>
     );
 }
