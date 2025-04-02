@@ -1,8 +1,9 @@
 <?php
 
-use Inertia\Inertia;
+use App\Http\Controllers\ConversationController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Inertia\Inertia;
 use Symfony\Component\HttpFoundation\StreamedResponse;
 
 Route::get('/', function () {
@@ -18,10 +19,14 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
+Route::get('conversation', [ConversationController::class, 'index'])->name('conversation.index');
+
 Route::get('/sse', function (Request $request) {
     return new StreamedResponse(function () {
         set_time_limit(0);
-        if (ob_get_level() == 0) ob_start();
+        if (ob_get_level() == 0) {
+            ob_start();
+        }
         // ob_implicit_flush(true);
         ob_end_clean();
 
@@ -46,7 +51,7 @@ Route::get('/sse', function (Request $request) {
         'Content-Type' => 'text/event-stream',
         'Cache-Control' => 'no-cache',
         'Connection' => 'keep-alive',
-        'X-Accel-Buffering' => 'no'
+        'X-Accel-Buffering' => 'no',
     ]);
 });
 
