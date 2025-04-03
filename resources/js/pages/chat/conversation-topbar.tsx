@@ -1,9 +1,29 @@
 import { ChevronDown } from 'lucide-react';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-export default function ConversationTopbar({ tools, models, defaultModel }: { tools: string[]; models: string[]; defaultModel: string }) {
+export default function ConversationTopbar({
+    tools,
+    models,
+    defaultModel,
+    handleModelChange,
+    handleToolChange,
+}: {
+    tools: string[];
+    models: string[];
+    defaultModel: string;
+    handleModelChange: (model: string) => void;
+    handleToolChange: (tool: string | null) => void;
+}) {
     const [selectedModel, setSelectedModel] = useState(defaultModel);
     const [selectedTool, setSelectedTool] = useState<string | null>(null);
+
+    useEffect(() => {
+        handleToolChange(selectedTool);
+    }, [selectedTool]);
+
+    useEffect(() => {
+        handleModelChange(selectedModel);
+    }, [selectedModel]);
 
     return (
         <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">

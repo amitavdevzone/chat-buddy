@@ -13,6 +13,12 @@ export default function ChatPage({ models, tools, defaultModel }: { models: stri
     const handleUserMessageChange = (message: string) => {
         setUserMessage(message);
     };
+    const handleModelChange = (model: string) => {
+        setSelectedModel(model);
+    };
+    const handleToolChange = (tool: string | null) => {
+        setSelectedTool(tool);
+    };
 
     return (
         <AppLayout>
@@ -22,7 +28,14 @@ export default function ChatPage({ models, tools, defaultModel }: { models: stri
                 <ConversationSidebar />
 
                 <div className="flex flex-1 flex-col">
-                    <ConversationTopbar models={models} tools={tools} defaultModel={defaultModel} />
+                    <ConversationTopbar
+                        models={models}
+                        tools={tools}
+                        defaultModel={defaultModel}
+                        handleModelChange={handleModelChange}
+                        handleToolChange={handleToolChange}
+                    />
+
                     <ChatArea handleUserMessage={handleUserMessageChange} />
                 </div>
             </div>
