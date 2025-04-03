@@ -11,7 +11,7 @@ class ConversationController extends Controller
     {
         $models = ['GPT-4', 'GPT-3.5', 'Custom', 'Claude', 'Bard', 'Gemini'];
         $tools = ['Web Search', 'Research'];
-        $defaultModel = ['Bard'];
+        $defaultModel = 'GPT-3.5';
 
         return Inertia::render('chat/index', [
             'models' => $models,

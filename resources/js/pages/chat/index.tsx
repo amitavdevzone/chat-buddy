@@ -1,24 +1,30 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head } from '@inertiajs/react';
-import { useState } from 'react';
+import { Head, useForm } from '@inertiajs/react';
+import { useEffect } from 'react';
 import ChatArea from './chat-area';
 import ConversationSidebar from './conversation-sidebar';
 import ConversationTopbar from './conversation-topbar';
 
 export default function ChatPage({ models, tools, defaultModel = '' }: { models: string[]; tools: string[]; defaultModel: string }) {
-    const [selectedModel, setSelectedModel] = useState(defaultModel);
-    const [selectedTool, setSelectedTool] = useState<string | null>(null);
-    const [userMessage, setUserMessage] = useState('');
+    const { data, setData, post } = useForm({
+        message: '',
+        model: defaultModel,
+        tool: '',
+    });
 
-    const handleUserMessageChange = (message: string) => {
-        setUserMessage(message);
-    };
-    const handleModelChange = (model: string) => {
-        setSelectedModel(model);
-    };
-    const handleToolChange = (tool: string | null) => {
-        setSelectedTool(tool);
-    };
+    // Handle the update of message from user coming from chat box
+    const handleUserMessageChange = (message: string) => setData('message', message);
+
+    useEffect(() => {
+        if (data.message) {
+            post(route('message.store'), {
+                preserveScroll: true,
+                onSuccess: () => {
+                    setData('message', '');
+                },
+            });
+        }
+    }, [data.message]);
 
     return (
         <AppLayout>
@@ -28,15 +34,11 @@ export default function ChatPage({ models, tools, defaultModel = '' }: { models:
                 <ConversationSidebar />
 
                 <div className="flex flex-1 flex-col">
-                    <ConversationTopbar
-                        models={models}
-                        tools={tools}
-                        defaultModel={defaultModel}
-                        handleModelChange={handleModelChange}
-                        handleToolChange={handleToolChange}
-                    />
+                    <ConversationTopbar models={models} tools={tools} defaultModel={data.model} handleDataChange={setData} />
 
-                    <ChatArea handleUserMessage={handleUserMessageChange} />
+                    <pre>{JSON.stringify(data)}</pre>
+
+                    <ChatArea userMessage={data.message} handleUserMessage={handleUserMessageChange} />
                 </div>
             </div>
         </AppLayout>

@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from 'react';
 
-export default function ChatArea({ handleUserMessage }: { handleUserMessage: (message: string) => void }) {
+export default function ChatArea({ userMessage, handleUserMessage }: { userMessage: string; handleUserMessage: (message: string) => void }) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [message, setMessage] = useState('');
 
@@ -11,6 +11,10 @@ export default function ChatArea({ handleUserMessage }: { handleUserMessage: (me
             ta.style.height = `${ta.scrollHeight}px`;
         }
     }, [message]);
+
+    useEffect(() => {
+        setMessage(userMessage);
+    }, [userMessage]);
 
     return (
         <>

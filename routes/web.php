@@ -19,6 +19,17 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
+Route::post('message', function (Request $request) {
+    logger($request->all());
+    $data = $request->validate([
+        'model' => 'required|string',
+        'message' => 'required|string',
+        'tool' => 'nullable|string',
+    ]);
+
+    logger($data);
+})->name('message.store');
+
 Route::get('conversation', [ConversationController::class, 'index'])->name('conversation.index');
 
 Route::get('/sse', function (Request $request) {

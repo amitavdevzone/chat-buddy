@@ -5,14 +5,12 @@ export default function ConversationTopbar({
     tools,
     models,
     defaultModel,
-    handleModelChange,
-    handleToolChange,
+    handleDataChange,
 }: {
     tools: string[];
     models: string[];
     defaultModel: string;
-    handleModelChange: (model: string) => void;
-    handleToolChange: (tool: string | null) => void;
+    handleDataChange: (key: string, value: string | null) => void;
 }) {
     const [selectedModel, setSelectedModel] = useState('');
 
@@ -22,22 +20,14 @@ export default function ConversationTopbar({
         setSelectedModel(defaultModel);
     }, []);
 
-    useEffect(() => {
-        handleToolChange(selectedTool);
-    }, [selectedTool]);
-
-    useEffect(() => {
-        handleModelChange(selectedModel);
-    }, [selectedModel]);
-
     return (
         <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
             <div className="flex items-center gap-4">
                 <div className="relative">
                     <select
                         multiple={false}
-                        value={selectedModel}
-                        onChange={(e) => setSelectedModel(e.target.value)}
+                        value={defaultModel}
+                        onChange={(e) => handleDataChange('model', e.target.value)}
                         className="appearance-none rounded bg-gray-100 p-2 pr-6 text-sm dark:bg-gray-700"
                     >
                         {models.map((model) => (
@@ -52,7 +42,7 @@ export default function ConversationTopbar({
                     {tools.map((tool) => (
                         <button
                             key={tool}
-                            onClick={() => setSelectedTool(tool === selectedTool ? null : tool)}
+                            onClick={() => handleDataChange('tool', tool === selectedTool ? null : tool)}
                             className={`rounded border px-3 py-1.5 text-sm ${
                                 selectedTool === tool
                                     ? 'border-blue-600 bg-blue-600 text-white'
