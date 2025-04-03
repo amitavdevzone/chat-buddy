@@ -5,7 +5,7 @@ import ChatArea from './chat-area';
 import ConversationSidebar from './conversation-sidebar';
 import ConversationTopbar from './conversation-topbar';
 
-export default function ChatPage({ models, tools, defaultModel }: { models: string[]; tools: string[]; defaultModel: string }) {
+export default function ChatPage({ models, tools, defaultModel = '' }: { models: string[]; tools: string[]; defaultModel: string }) {
     const [selectedModel, setSelectedModel] = useState(defaultModel);
     const [selectedTool, setSelectedTool] = useState<string | null>(null);
     const [userMessage, setUserMessage] = useState('');

@@ -14,8 +14,13 @@ export default function ConversationTopbar({
     handleModelChange: (model: string) => void;
     handleToolChange: (tool: string | null) => void;
 }) {
-    const [selectedModel, setSelectedModel] = useState(defaultModel);
+    const [selectedModel, setSelectedModel] = useState('');
+
     const [selectedTool, setSelectedTool] = useState<string | null>(null);
+
+    useEffect(() => {
+        setSelectedModel(defaultModel);
+    }, []);
 
     useEffect(() => {
         handleToolChange(selectedTool);
@@ -30,6 +35,7 @@ export default function ConversationTopbar({
             <div className="flex items-center gap-4">
                 <div className="relative">
                     <select
+                        multiple={false}
                         value={selectedModel}
                         onChange={(e) => setSelectedModel(e.target.value)}
                         className="appearance-none rounded bg-gray-100 p-2 pr-6 text-sm dark:bg-gray-700"
