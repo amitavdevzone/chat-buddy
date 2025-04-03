@@ -1,11 +1,22 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, useForm } from '@inertiajs/react';
 import { useEffect } from 'react';
+import { Conversation } from '../../types';
 import ChatArea from './chat-area';
 import ConversationSidebar from './conversation-sidebar';
 import ConversationTopbar from './conversation-topbar';
 
-export default function ChatPage({ models, tools, defaultModel = '' }: { models: string[]; tools: string[]; defaultModel: string }) {
+export default function ChatPage({
+    conversation,
+    models,
+    tools,
+    defaultModel = '',
+}: {
+    conversation: Conversation;
+    models: string[];
+    tools: string[];
+    defaultModel: string;
+}) {
     const { data, setData, post } = useForm({
         message: '',
         model: defaultModel,
@@ -24,7 +35,8 @@ export default function ChatPage({ models, tools, defaultModel = '' }: { models:
                 },
             });
         }
-    }, [data.message]);
+         
+    }, [data.message, post, setData]);
 
     return (
         <AppLayout>
@@ -36,9 +48,7 @@ export default function ChatPage({ models, tools, defaultModel = '' }: { models:
                 <div className="flex flex-1 flex-col">
                     <ConversationTopbar models={models} tools={tools} defaultModel={data.model} handleDataChange={setData} />
 
-                    <pre>{JSON.stringify(data)}</pre>
-
-                    <ChatArea userMessage={data.message} handleUserMessage={handleUserMessageChange} />
+                    <ChatArea conversation={conversation} userMessage={data.message} handleUserMessage={handleUserMessageChange} />
                 </div>
             </div>
         </AppLayout>

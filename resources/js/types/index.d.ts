@@ -1,6 +1,23 @@
 import { LucideIcon } from 'lucide-react';
 import type { Config } from 'ziggy-js';
 
+export interface Message {
+    id: number;
+    conversation_id: number;
+    user_id: number;
+    sender_type: 'user' | 'agent';
+    message: string;
+}
+
+export interface Conversation {
+    id: number;
+    name: string;
+    user_id: number;
+    created_at: string;
+    updated_at: string;
+    messages: Message[];
+}
+
 export interface Auth {
     user: User;
 }

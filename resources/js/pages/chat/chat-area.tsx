@@ -1,6 +1,15 @@
 import { useEffect, useRef, useState } from 'react';
+import { Conversation } from '../../types';
 
-export default function ChatArea({ userMessage, handleUserMessage }: { userMessage: string; handleUserMessage: (message: string) => void }) {
+export default function ChatArea({
+    conversation,
+    userMessage,
+    handleUserMessage,
+}: {
+    conversation: Conversation;
+    userMessage: string;
+    handleUserMessage: (message: string) => void;
+}) {
     const textAreaRef = useRef<HTMLTextAreaElement>(null);
     const [message, setMessage] = useState('');
 
@@ -16,20 +25,27 @@ export default function ChatArea({ userMessage, handleUserMessage }: { userMessa
         setMessage(userMessage);
     }, [userMessage]);
 
-    return (
-        <>
-            <div className="flex-1 space-y-4 overflow-y-auto p-6">
-                <div className="max-w-xl rounded bg-gray-200 p-4 dark:bg-gray-700">
+    const renderMessages = () => {
+        if (!conversation.messages.length) return null;
+
+        return conversation.messages.map((message) => (
+            <div key={message.id} className={`flex w-full ${message.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                <div
+                    className={`max-w-xl rounded p-4 ${
+                        message.sender_type === 'user' ? 'bg-gray-200 dark:bg-gray-700' : 'bg-gray-100 dark:bg-gray-600'
+                    }`}
+                >
                     <p>
-                        <strong>User:</strong> Hello, what's up?
-                    </p>
-                </div>
-                <div className="max-w-xl self-start rounded bg-gray-100 p-4 dark:bg-gray-600">
-                    <p>
-                        <strong>Assistant:</strong> Hey! How can I help you today?
+                        <strong>{message.sender_type === 'user' ? 'User:' : 'Assistant:'}</strong> {message.message}
                     </p>
                 </div>
             </div>
+        ));
+    };
+
+    return (
+        <>
+            <div className="flex-1 space-y-4 overflow-y-auto p-6">{renderMessages()}</div>
 
             <div className="border-t border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
                 <div className="flex">
