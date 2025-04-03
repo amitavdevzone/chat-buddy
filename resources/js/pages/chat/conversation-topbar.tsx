@@ -1,5 +1,5 @@
 import { ChevronDown } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 
 export default function ConversationTopbar({
     tools,
@@ -12,13 +12,7 @@ export default function ConversationTopbar({
     defaultModel: string;
     handleDataChange: (key: string, value: string | null) => void;
 }) {
-    const [selectedModel, setSelectedModel] = useState('');
-
-    const [selectedTool, setSelectedTool] = useState<string | null>(null);
-
-    useEffect(() => {
-        setSelectedModel(defaultModel);
-    }, []);
+    const [selectedTool] = useState<string | null>(null);
 
     return (
         <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
