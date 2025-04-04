@@ -1,5 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
-import { Head, useForm } from '@inertiajs/react';
+import { Head, router, useForm } from '@inertiajs/react';
 import { useEffect } from 'react';
 import { Conversation } from '../../types';
 import ChatArea from './chat-area';
@@ -32,6 +32,7 @@ export default function ChatPage({
                 preserveScroll: true,
                 onSuccess: () => {
                     setData('message', '');
+                    router.reload({ only: ['conversation'] });
                 },
             });
         }

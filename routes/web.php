@@ -1,6 +1,8 @@
 <?php
 
+use App\Enums\SenderType;
 use App\Http\Controllers\ConversationController;
+use App\Models\Message;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
@@ -20,11 +22,17 @@ require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
 Route::post('message', function (Request $request) {
-    logger($request->all());
     $data = $request->validate([
         'model' => 'required|string',
         'message' => 'required|string',
         'tool' => 'nullable|string',
+    ]);
+
+    Message::create([
+        'conversation_id' => 1,
+        'user_id' => auth()->user()->id,
+        'sender_type' => SenderType::USER->value,
+        'message' => $data['message'],
     ]);
 
     logger($data);
