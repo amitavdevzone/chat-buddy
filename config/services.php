@@ -35,4 +35,10 @@ return [
         ],
     ],
 
+    'ai_provider' => env('AI_SERVICE', 'llama'),
+
+    'llama' => [
+        'base_url' => env('LLAMA_BASE_URL'),
+    ],
+
 ];

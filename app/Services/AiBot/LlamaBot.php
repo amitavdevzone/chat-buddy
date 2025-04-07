@@ -5,16 +5,14 @@ namespace App\Services\AiBot;
 use OpenAI;
 use OpenAI\Client;
 
-class OpenAiBot implements AiBotInterface
+class LlamaBot implements AiBotInterface
 {
     public function getClient(): Client
     {
-        $apiKey = config('openai.api_key');
-        $orgKey = config('openai.organization');
+        $baseUrl = config('services.llama.base_url');
 
         return OpenAI::factory()
-            ->withApiKey($apiKey)
-            ->withOrganization($orgKey)
+            ->withBaseUri($baseUrl)
             ->make();
     }
 

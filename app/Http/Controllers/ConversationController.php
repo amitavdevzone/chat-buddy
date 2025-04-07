@@ -3,14 +3,15 @@
 namespace App\Http\Controllers;
 
 use App\Models\Conversation;
+use App\Services\AiBot\AiBotInterface;
 use Inertia\Inertia;
 use Inertia\Response;
 
 class ConversationController extends Controller
 {
-    public function index(): Response
+    public function index(AiBotInterface $aiBot): Response
     {
-        $models = ['GPT-4', 'GPT-3.5', 'Custom', 'Claude', 'Bard', 'Gemini'];
+        $models = $aiBot->getModels();
         $tools = ['Web Search', 'Research'];
         $defaultModel = 'GPT-3.5';
 
