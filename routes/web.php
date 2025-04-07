@@ -34,8 +34,6 @@ Route::post('message', function (Request $request) {
         'sender_type' => SenderType::USER->value,
         'message' => $data['message'],
     ]);
-
-    logger($data);
 })->name('message.store');
 
 Route::get('conversation', [ConversationController::class, 'index'])->name('conversation.index');
