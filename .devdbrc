@@ -1,0 +1,6 @@
+[
+  {
+    "type": "sqlite",
+    "path": "/home/amitavroy/code/tutorials/chat-buddy/database/database.sqlite"
+  }
+]
