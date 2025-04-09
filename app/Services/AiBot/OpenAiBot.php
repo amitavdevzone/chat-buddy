@@ -30,13 +30,12 @@ class OpenAiBot implements AiBotInterface
         return $models->toArray();
     }
 
-    public function getCompletion(string $model, string $message, ?string $tool = null): array
+    public function getCompletion(string $model, string $message): array
     {
         // Simulate a response from OpenAI API
         $response = [
             'model' => $model,
             'message' => "This is a simulated response for model: $model with message: $message",
-            'tool' => $tool,
         ];
 
         return $response;

@@ -2,6 +2,7 @@
 
 namespace App\Services\AiBot;
 
+use Illuminate\Support\Arr;
 use OpenAI;
 use OpenAI\Client;
 
@@ -28,15 +29,33 @@ class LlamaBot implements AiBotInterface
         return $models->toArray();
     }
 
-    public function getCompletion(string $model, string $message, ?string $tool = null): array
+    public function getCompletion(string $model, string $message): array
     {
-        // Simulate a response from OpenAI API
-        $response = [
-            'model' => $model,
-            'message' => "This is a simulated response for model: $model with message: $message",
-            'tool' => $tool,
+        $messages = [
+            [
+                'role' => 'system',
+                'content' => '
+                You are a helpful and friendly assistant that always answers in a concise manner.
+                Ensure that you are not using any bad words or offensive language to answer.
+                Do not use more than 1000 tokens to answer any question.
+                ',
+            ],
+            [
+                'role' => 'user',
+                'content' => $message,
+            ],
         ];
 
-        return $response;
+        $response = $this->getClient()->chat()->create([
+            'model' => $model,
+            'messages' => $messages,
+        ]);
+
+        return [
+            'id' => $response->id,
+            'model' => $response->model,
+            'message' => Arr::get($response, 'choices.0.message.content'),
+            'response' => $response,
+        ];
     }
 }
