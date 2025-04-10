@@ -55,7 +55,16 @@ class LlamaBot implements AiBotInterface
             'id' => $response->id,
             'model' => $response->model,
             'message' => Arr::get($response, 'choices.0.message.content'),
-            'response' => $response,
+            'usage' => $this->getUsageData($response->toArray()),
+        ];
+    }
+
+    private function getUsageData(array $response): array
+    {
+        return [
+            'prompt_tokens' => Arr::get($response, 'usage.prompt_tokens'),
+            'completion_tokens' => Arr::get($response, 'usage.completion_tokens'),
+            'total_tokens' => Arr::get($response, 'usage.total_tokens'),
         ];
     }
 }
