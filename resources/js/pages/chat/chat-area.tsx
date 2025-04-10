@@ -27,6 +27,10 @@ export default function ChatArea({
     }, [message]);
 
     useEffect(() => {
+        scrollToBottom();
+    }, [conversation]);
+
+    useEffect(() => {
         setMessage(userMessage);
     }, [userMessage]);
 
@@ -61,7 +65,6 @@ export default function ChatArea({
 
     const sendUserMessage = (message: string) => {
         handleUserMessage(message);
-        scrollToBottom();
     };
 
     return (
