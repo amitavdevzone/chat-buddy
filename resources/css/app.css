@@ -157,3 +157,39 @@
         @apply bg-background text-foreground;
     }
 }
+/* Add to your CSS */
+.markdown-content pre {
+    border-radius: 0.375rem;
+    padding: 1rem;
+    margin: 0.75rem 0;
+    overflow-x: auto;
+}
+
+.markdown-content code {
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, monospace;
+    font-size: 0.875rem;
+}
+
+.markdown-content p {
+    margin-bottom: 0.75rem;
+}
+
+/* Add to your CSS */
+.markdown-content pre,
+.markdown-content code {
+  font-family: 'Fira Code', monospace;
+  font-size: 0.875rem;
+  font-feature-settings: "calt" 1;  /* Enable ligatures for symbols */
+  text-rendering: optimizeLegibility;
+}
+
+.markdown-content pre {
+  border-radius: 0.375rem;
+  padding: 1rem;
+  margin: 0.75rem 0;
+  overflow-x: auto;
+}
+
+.markdown-content p {
+  margin-bottom: 0.75rem;
+}

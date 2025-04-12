@@ -1,5 +1,22 @@
+import hljs from 'highlight.js';
+import 'highlight.js/styles/github-dark.css';
+import MarkdownIt from 'markdown-it';
 import { useEffect, useRef, useState } from 'react';
 import { Conversation } from '../../types';
+
+const md = new MarkdownIt({
+    linkify: true,
+    breaks: true,
+    highlight: function (str, lang) {
+        if (lang && hljs.getLanguage(lang)) {
+            try {
+                return hljs.highlight(str, { language: lang }).value;
+            } catch (__) {}
+        }
+
+        return ''; // use external default escaping
+    },
+});
 
 export default function ChatArea({
     conversation,
@@ -46,7 +63,12 @@ export default function ChatArea({
                     }`}
                 >
                     <p>
-                        <strong>{message.sender_type === 'user' ? 'User:' : 'Assistant:'}</strong> {message.message}
+                        <strong>{message.sender_type === 'user' ? 'User:' : 'Assistant:'}</strong>{' '}
+                        {message.sender_type === 'user' ? (
+                            message.message
+                        ) : (
+                            <span dangerouslySetInnerHTML={{ __html: md.render(message.message) }} className="markdown-content" />
+                        )}
                     </p>
                 </div>
             </div>
