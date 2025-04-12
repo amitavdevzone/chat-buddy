@@ -79,6 +79,13 @@ export default function ChatArea({
                         ref={textAreaRef}
                         value={message}
                         onChange={(e) => setMessage(e.target.value)}
+                        onKeyDown={(e) => {
+                            if (e.ctrlKey && e.key === 'Enter' && message.trim()) {
+                                e.preventDefault();
+                                sendUserMessage(message);
+                                setMessage('');
+                            }
+                        }}
                         placeholder="Send a message..."
                         rows={1}
                         className="flex-1 resize-none rounded bg-gray-100 p-3 text-sm outline-none dark:bg-gray-700"
