@@ -2,5 +2,9 @@
   {
     "type": "sqlite",
     "path": "/home/amitavroy/code/tutorials/chat-buddy/database/database.sqlite"
+  },
+  {
+    "type": "sqlite",
+    "path": "/home/amitavroy/code/tutorial/chat-buddy/database/database.sqlite"
   }
 ]
