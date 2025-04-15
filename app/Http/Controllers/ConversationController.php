@@ -56,58 +56,6 @@ class ConversationController extends Controller
         $message = $request->input('message');
         $conversation = Conversation::find(1);
 
-        return new StreamedResponse(function () use ($message, $aiBot, $conversation) {
-            set_time_limit(0);
-            if (ob_get_level() == 0) {
-                ob_start();
-            }
-            ob_end_clean();
-
-            $messages = [
-                [
-                    'role' => 'system',
-                    'content' => 'You are a helpful and friendly assistant that always answers in a concise manner.
-                    Ensure that you are not using any bad words or offensive language to answer.
-                    Do not use more than 1000 words to answer any question.',
-                ],
-                [
-                    'role' => 'user',
-                    'content' => "You are a helpful and friendly assistant that always answers in a concise manner.
-                    Ensure that you are not using any bad words or offensive language to answer.
-                    Answer to the question by the user: {$message}.
-                    And the previous summary of the conversation is: {$conversation->summary}
-                    ",
-                ],
-            ];
-
-            $stream = $aiBot->getClient()->chat()->createStreamed([
-                'model' => 'gemma3:4b',
-                'messages' => $messages,
-            ]);
-
-            $finalMessage = '';
-            foreach ($stream as $response) {
-                echo "data: {$response->choices[0]->toArray()['delta']['content']}\n\n";
-                $finalMessage .= $response->choices[0]->toArray()['delta']['content'];
-                flush();
-            }
-
-            flush();
-
-            Message::create([
-                'conversation_id' => 1,
-                'user_id' => auth()->user()->id,
-                'sender_type' => SenderType::AGENT->value,
-                'message' => $finalMessage,
-            ]);
-
-            $aiBot->generateAndSaveSummary($conversation);
-
-        }, 200, [
-            'Content-Type' => 'text/event-stream',
-            'Cache-Control' => 'no-cache',
-            'Connection' => 'keep-alive',
-            'X-Accel-Buffering' => 'no',
-        ]);
+        return $aiBot->getStreamedCompletion($message, $conversation);
     }
 }

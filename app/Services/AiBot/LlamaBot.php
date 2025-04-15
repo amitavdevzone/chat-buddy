@@ -2,12 +2,14 @@
 
 namespace App\Services\AiBot;
 
+use App\Enums\SenderType;
 use App\Models\Conversation;
 use App\Models\Message;
 use Exception;
 use Illuminate\Support\Arr;
 use OpenAI;
 use OpenAI\Client;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 class LlamaBot implements AiBotInterface
 {
@@ -30,6 +32,62 @@ class LlamaBot implements AiBotInterface
         });
 
         return $models->toArray();
+    }
+
+    public function getStreamedCompletion(string $message, Conversation $conversation): StreamedResponse
+    {
+        return new StreamedResponse(function () use ($message, $conversation) {
+            set_time_limit(0);
+            if (ob_get_level() == 0) {
+                ob_start();
+            }
+            ob_end_clean();
+
+            $messages = [
+                [
+                    'role' => 'system',
+                    'content' => 'You are a helpful and friendly assistant that always answers in a concise manner.
+                    Ensure that you are not using any bad words or offensive language to answer.
+                    Do not use more than 1000 words to answer any question.',
+                ],
+                [
+                    'role' => 'user',
+                    'content' => "You are a helpful and friendly assistant that always answers in a concise manner.
+                    Ensure that you are not using any bad words or offensive language to answer.
+                    Answer to the question by the user: {$message}.
+                    And the previous summary of the conversation is: {$conversation->summary}",
+                ],
+            ];
+
+            $stream = $this->getClient()->chat()->createStreamed([
+                'model' => 'deepseek-r1:8b',
+                'messages' => $messages,
+            ]);
+
+            $finalMessage = '';
+            foreach ($stream as $response) {
+                echo "data: {$response->choices[0]->toArray()['delta']['content']}\n\n";
+                $finalMessage .= $response->choices[0]->toArray()['delta']['content'];
+                flush();
+            }
+
+            flush();
+
+            Message::create([
+                'conversation_id' => 1,
+                'user_id' => auth()->user()->id,
+                'sender_type' => SenderType::AGENT->value,
+                'message' => $finalMessage,
+            ]);
+
+            $this->generateAndSaveSummary($conversation);
+
+        }, 200, [
+            'Content-Type' => 'text/event-stream',
+            'Cache-Control' => 'no-cache',
+            'Connection' => 'keep-alive',
+            'X-Accel-Buffering' => 'no',
+        ]);
     }
 
     public function getCompletion(string $model, string $message): array
@@ -92,14 +150,14 @@ class LlamaBot implements AiBotInterface
         $messages = [
             [
                 'role' => 'system',
-                'content' => 'You are an AI assistant. Your task is to summarise conversation concisely.
+                'content' => "You are an AI assistant. Your task is to summarise conversation concisely.
                     You should ensure that the key points of the conversation is captured in the summary.
                     When possible create a bullet list of the key points.
-                    Do not try to make information up.',
+                    Do not try to make information up.",
             ],
             [
                 'role' => 'user',
-                'content' => "You are an AI assistant. Your task is to summarise conversation concisely.
+                'content' => "Your task is to summarise conversation concisely.
                     Here is the last bit of summary based on the conversation that happened so far {$conversation->summary}.
                     Here is the last question by the user: {$recentMessages[1]} and the answer
                     to that by the AI assistant is {$recentMessages[0]}.",

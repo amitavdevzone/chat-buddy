@@ -4,6 +4,7 @@ namespace App\Services\AiBot;
 
 use App\Models\Conversation;
 use OpenAI\Client;
+use Symfony\Component\HttpFoundation\StreamedResponse;
 
 interface AiBotInterface
 {
@@ -12,6 +13,8 @@ interface AiBotInterface
     public function getModels(): array;
 
     public function getCompletion(string $model, string $message): array;
+
+    public function getStreamedCompletion(string $message, Conversation $conversation): StreamedResponse;
 
     public function getUsageData(array $response): array;
 
