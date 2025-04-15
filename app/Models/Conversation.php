@@ -14,6 +14,7 @@ class Conversation extends Model
     protected $fillable = [
         'name',
         'user_id',
+        'summary',
     ];
 
     public function user(): BelongsTo

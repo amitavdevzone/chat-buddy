@@ -19,6 +19,7 @@ class ConversationFactory extends Factory
             'updated_at' => Carbon::now(),
 
             'user_id' => User::factory(),
+            'summary' => $this->faker->sentence(),
         ];
     }
 }

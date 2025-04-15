@@ -2,6 +2,7 @@
 
 namespace App\Services\AiBot;
 
+use App\Models\Conversation;
 use OpenAI;
 use OpenAI\Client;
 
@@ -39,5 +40,15 @@ class OpenAiBot implements AiBotInterface
         ];
 
         return $response;
+    }
+
+    public function getUsageData(array $response): array
+    {
+        // TODO: Implement getUsageData() method.
+    }
+
+    public function generateAndSaveSummary(Conversation $conversation): void
+    {
+        // TODO: Implement generateAndSaveSummary() method.
     }
 }

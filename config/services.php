@@ -39,6 +39,7 @@ return [
 
     'llama' => [
         'base_url' => env('LLAMA_BASE_URL'),
+        'summary_model' => env('LLAMA_SUMMARY_MODEL'),
     ],
 
 ];

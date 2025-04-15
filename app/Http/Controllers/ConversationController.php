@@ -20,10 +20,11 @@ class ConversationController extends Controller
         $defaultModel = $models[0];
 
         $conversation = Conversation::query()
+            ->where('id', 1)
             ->with(['messages' => function ($query) {
-                $query->latest()->take(30);
+                $query->orderByDesc('id')
+                    ->take(30);
             }])
-            ->latest()
             ->first();
 
         return Inertia::render('chat/index', [
@@ -53,8 +54,9 @@ class ConversationController extends Controller
     public function respond(Request $request, AiBotInterface $aiBot): StreamedResponse
     {
         $message = $request->input('message');
+        $conversation = Conversation::find(1);
 
-        return new StreamedResponse(function () use ($message, $aiBot) {
+        return new StreamedResponse(function () use ($message, $aiBot, $conversation) {
             set_time_limit(0);
             if (ob_get_level() == 0) {
                 ob_start();
@@ -64,15 +66,17 @@ class ConversationController extends Controller
             $messages = [
                 [
                     'role' => 'system',
-                    'content' => '
-                    You are a helpful and friendly assistant that always answers in a concise manner.
+                    'content' => 'You are a helpful and friendly assistant that always answers in a concise manner.
                     Ensure that you are not using any bad words or offensive language to answer.
-                    Do not use more than 1000 tokens to answer any question.
-                    ',
+                    Do not use more than 1000 words to answer any question.',
                 ],
                 [
                     'role' => 'user',
-                    'content' => $message,
+                    'content' => "You are a helpful and friendly assistant that always answers in a concise manner.
+                    Ensure that you are not using any bad words or offensive language to answer.
+                    Answer to the question by the user: {$message}.
+                    And the previous summary of the conversation is: {$conversation->summary}
+                    ",
                 ],
             ];
 
@@ -96,6 +100,9 @@ class ConversationController extends Controller
                 'sender_type' => SenderType::AGENT->value,
                 'message' => $finalMessage,
             ]);
+
+            $aiBot->generateAndSaveSummary($conversation);
+
         }, 200, [
             'Content-Type' => 'text/event-stream',
             'Cache-Control' => 'no-cache',

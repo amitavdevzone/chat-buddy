@@ -13,6 +13,7 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->foreignIdFor(User::class)->index()->constrained()->cascadeOnDelete();
+            $table->text('summary')->nullable();
             $table->timestamps();
         });
     }

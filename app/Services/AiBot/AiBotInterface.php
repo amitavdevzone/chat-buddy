@@ -2,6 +2,7 @@
 
 namespace App\Services\AiBot;
 
+use App\Models\Conversation;
 use OpenAI\Client;
 
 interface AiBotInterface
@@ -11,4 +12,8 @@ interface AiBotInterface
     public function getModels(): array;
 
     public function getCompletion(string $model, string $message): array;
+
+    public function getUsageData(array $response): array;
+
+    public function generateAndSaveSummary(Conversation $conversation): void;
 }
