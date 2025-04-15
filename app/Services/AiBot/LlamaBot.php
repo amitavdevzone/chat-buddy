@@ -150,10 +150,10 @@ class LlamaBot implements AiBotInterface
         $messages = [
             [
                 'role' => 'system',
-                'content' => "You are an AI assistant. Your task is to summarise conversation concisely.
+                'content' => 'You are an AI assistant. Your task is to summarise conversation concisely.
                     You should ensure that the key points of the conversation is captured in the summary.
                     When possible create a bullet list of the key points.
-                    Do not try to make information up.",
+                    Do not try to make information up.',
             ],
             [
                 'role' => 'user',
