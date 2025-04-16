@@ -1,6 +1,18 @@
-import {Provider} from '../../types';
+import {type BreadcrumbItem, Provider} from '../../types';
 import {Head} from '@inertiajs/react';
 import AppLayout from "@/layouts/app-layout";
+import {route} from "ziggy-js";
+
+const breadcrumbs: BreadcrumbItem[] = [
+  {
+    title: 'Dashboard',
+    href: route('dashboard'),
+  },
+  {
+    title: 'Providers',
+    href: route('providers.index'),
+  },
+];
 
 export default function ProvidersList({providers}: { providers: Array<Provider> }) {
   function renderProviderList() {
@@ -18,7 +30,7 @@ export default function ProvidersList({providers}: { providers: Array<Provider> 
     </div>
   }
 
-  return <AppLayout>
+  return <AppLayout breadcrumbs={breadcrumbs}>
     <Head title="Providers list"/>
 
     <div className="flex h-full flex-1 flex-col gap-4 rounded-xl p-4">
