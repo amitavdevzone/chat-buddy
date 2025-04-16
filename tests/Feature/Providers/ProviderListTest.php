@@ -1,6 +1,5 @@
 <?php
 
-use App\Enums\ProviderType;
 use App\Models\Provider;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;

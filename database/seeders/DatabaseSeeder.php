@@ -6,6 +6,7 @@ use App\Enums\SenderType;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use App\Models\Conversation;
 use App\Models\Message;
+use App\Models\Provider;
 use App\Models\User;
 use Illuminate\Database\Seeder;
 
@@ -47,6 +48,26 @@ class DatabaseSeeder extends Seeder
                     'created_at' => now()->addMinutes($i), // Sequential timing
                 ]);
             }
+        });
+
+        $this->seedProviderData();
+    }
+
+    private function seedProviderData(): void
+    {
+        collect([
+            [
+                'name' => 'OpenAI',
+                'url' => 'https://openai.com',
+                'type' => 'openai',
+            ],
+            [
+                'name' => 'Local Llama',
+                'url' => 'http://localhost:11434',
+                'type' => 'llama',
+            ],
+        ])->each(function ($providerData) {
+            Provider::create($providerData);
         });
     }
 }
