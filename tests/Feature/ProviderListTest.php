@@ -26,18 +26,14 @@ describe('Provider list test', function () {
     it('shows the providers list', function () {
         actingAs(User::factory()->create());
 
-        Provider::factory()->count(5)->create();
-        Provider::factory()->create([
-            'name' => '1a1a1a1a1a1a1a',
-            'url' => 'https://test-provider.com',
-            'type' => ProviderType::LLAMA->value,
-        ]);
+        Provider::factory()->create(['name' => 'Anthropic']);
+        Provider::factory()->create(['name' => 'OpenAI']);
 
         get(route('providers.index'))
             ->assertInertia(fn (AssertableInertia $page) => $page
                 ->component('providers/index')
-                ->has('providers', 6)
-                ->where('providers.0.name', '1a1a1a1a1a1a1a')
+                ->has('providers', 2)
+                ->where('providers.0.name', 'Anthropic')
             );
     });
 });
