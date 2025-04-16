@@ -2,6 +2,7 @@
 
 use App\Enums\SenderType;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\ProviderController;
 use App\Models\Message;
 use App\Services\AiBot\AiBotInterface;
 use Illuminate\Http\Request;
@@ -18,6 +19,8 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::get('conversation', [ConversationController::class, 'index'])->name('conversation.index');
+    Route::get('respond', [ConversationController::class, 'respond'])->name('message.response');
+    Route::resource('providers', ProviderController::class)->only(['index']);
 });
 
 require __DIR__.'/settings.php';
@@ -35,13 +38,5 @@ Route::post('message', function (Request $request, AiBotInterface $aiBot) {
         'user_id' => auth()->user()->id,
         'sender_type' => SenderType::USER->value,
         'message' => $data['message'],
-    ]);
-
-    $response = $aiBot->getCompletion('gemma3:4b', $data['message']);
-    Message::create([
-        'conversation_id' => 1,
-        'user_id' => auth()->user()->id,
-        'sender_type' => SenderType::AGENT->value,
-        'message' => $response['message'],
     ]);
 })->name('message.store');
