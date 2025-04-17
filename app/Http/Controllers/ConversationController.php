@@ -15,7 +15,7 @@ class ConversationController extends Controller
 {
     public function index(AiBotInterface $aiBot): Response
     {
-        $models = $aiBot->getModels();
+        $models = $aiBot->getModels()->pluck('name')->toArray();
         $tools = ['Web Search', 'Research'];
         $defaultModel = $models[0];
 
@@ -54,6 +54,7 @@ class ConversationController extends Controller
     public function respond(Request $request, AiBotInterface $aiBot): StreamedResponse
     {
         $message = $request->input('message');
+
         $conversation = Conversation::find(1);
 
         return $aiBot->getStreamedCompletion($message, $conversation);
