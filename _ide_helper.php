@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.9.0.
+ * Generated for Laravel 12.9.2.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -8106,16 +8106,15 @@ namespace Illuminate\Support\Facades {
          * Execute a Closure within a transaction.
          * @param (\Closure(static): TReturn) $callback
          * @param int $attempts
-         * @param \Closure|null $onFailure
          * @return TReturn 
          * @throws \Throwable
          * @static 
          */
-        public static function transaction($callback, $attempts = 1, $onFailure = null)
+        public static function transaction($callback, $attempts = 1)
         {
             //Method inherited from \Illuminate\Database\Connection 
             /** @var \Illuminate\Database\SQLiteConnection $instance */
-            return $instance->transaction($callback, $attempts, $onFailure);
+            return $instance->transaction($callback, $attempts);
         }
 
         /**
