@@ -1,6 +1,5 @@
 import AppLayout from '@/layouts/app-layout';
 import { Head, Link } from '@inertiajs/react';
-import { route } from 'ziggy-js';
 import { type BreadcrumbItem, Provider } from '../../types';
 
 const breadcrumbs: BreadcrumbItem[] = [
