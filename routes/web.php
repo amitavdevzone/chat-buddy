@@ -2,6 +2,7 @@
 
 use App\Enums\SenderType;
 use App\Http\Controllers\ConversationController;
+use App\Http\Controllers\ModelFetchController;
 use App\Http\Controllers\ProviderController;
 use App\Models\Message;
 use App\Services\AiBot\AiBotInterface;
@@ -19,9 +20,13 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::get('conversation', [ConversationController::class, 'index'])->name('conversation.index');
+
     Route::get('respond', [ConversationController::class, 'respond'])->name('message.response');
+
     Route::resource('providers', ProviderController::class)
         ->only(['index', 'show', 'create', 'store']);
+
+    Route::get('model-fetch', ModelFetchController::class)->name('model.fetch');
 });
 
 require __DIR__.'/settings.php';

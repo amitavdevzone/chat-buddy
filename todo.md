@@ -1,6 +1,6 @@
 # Feature: Model management from Provider
 
-- [ ] Should be able to add a new Provider URL
+- [x] Should be able to add a new Provider URL
 - [ ] Should be able to fetch models available from that provider
 - [ ] Should allow me to select which models I would like to use (this will show in the dropdown)
 - [ ] Should be able to select the default model for this provider
