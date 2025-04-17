@@ -21,7 +21,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     Route::get('conversation', [ConversationController::class, 'index'])->name('conversation.index');
     Route::get('respond', [ConversationController::class, 'respond'])->name('message.response');
     Route::resource('providers', ProviderController::class)
-        ->only(['index', 'create', 'store']);
+        ->only(['index', 'show', 'create', 'store']);
 });
 
 require __DIR__.'/settings.php';

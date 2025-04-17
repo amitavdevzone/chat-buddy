@@ -23,6 +23,13 @@ class ProviderController extends Controller
         ]);
     }
 
+    public function show(Provider $provider): Response
+    {
+        return Inertia::render('providers/show', [
+            'provider' => $provider,
+        ]);
+    }
+
     public function create(): Response
     {
         return Inertia::render('providers/create');
