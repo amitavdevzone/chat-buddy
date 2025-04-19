@@ -27,7 +27,7 @@ class ConversationController extends Controller
             }])
             ->first();
 
-        return Inertia::render('chat/chatnew', [
+        return Inertia::render('chatnew/index', [
             'models' => $models,
             'tools' => $tools,
             'defaultModel' => $defaultModel,

@@ -3,7 +3,9 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
 import { BotMessageSquare, MoreVertical, Pencil, Send, Settings2, Trash2, UserCircle2 } from 'lucide-react';
 import MarkdownIt from 'markdown-it';
-import { ChangeEvent, KeyboardEvent, MouseEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import ChatSettings from './chat-settings';
+import { useChatStore } from './chatstore';
 
 const mdParser: any = new MarkdownIt({
   highlight: function (str: string, lang: string) {
@@ -50,25 +52,9 @@ export default function ChatUI() {
   const [input, setInput] = useState<string>('');
   const [selectedModel, setSelectedModel] = useState<string>('gpt-4');
   const [dropdownOpenId, setDropdownOpenId] = useState<number | null>(null);
-  const [isSettingsOpen, setIsSettingsOpen] = useState<boolean>(false);
-  const settingsRef = useRef<HTMLDivElement | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
-  useEffect(() => {
-    const handleClickOutside = (event: MouseEvent | globalThis.MouseEvent) => {
-      if (settingsRef.current && !settingsRef.current.contains(event.target as Node)) {
-        setIsSettingsOpen(false);
-      }
-    };
-    if (isSettingsOpen) {
-      document.addEventListener('mousedown', handleClickOutside);
-    } else {
-      document.removeEventListener('mousedown', handleClickOutside);
-    }
-    return () => {
-      document.removeEventListener('mousedown', handleClickOutside);
-    };
-  }, [isSettingsOpen]);
+  const toggleSettingDrawer = useChatStore((state) => state.toggleSettingDrawer);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -181,7 +167,7 @@ export default function ChatUI() {
             </select>
             <Settings2
               className="cursor-pointer text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white"
-              onClick={() => setIsSettingsOpen(true)}
+              onClick={() => toggleSettingDrawer()}
             />
           </div>
         </div>
@@ -226,26 +212,7 @@ export default function ChatUI() {
           </div>
         </div>
 
-        {isSettingsOpen && (
-          <div
-            ref={settingsRef}
-            className="fixed top-0 right-0 z-50 h-full w-1/2 transform bg-white shadow-lg transition-transform duration-300 ease-in-out dark:bg-gray-800"
-          >
-            <div className="flex items-center justify-between border-b border-gray-200 p-4 font-semibold dark:border-gray-700">
-              Settings
-              <button
-                className="text-sm text-gray-500 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white"
-                onClick={() => setIsSettingsOpen(false)}
-              >
-                Close
-              </button>
-            </div>
-            <div className="space-y-4 p-4">
-              {/* You can add settings form elements here */}
-              <p className="text-sm text-gray-700 dark:text-gray-300">Settings content goes here.</p>
-            </div>
-          </div>
-        )}
+        <ChatSettings />
       </div>
     </div>
   );
