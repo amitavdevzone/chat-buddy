@@ -50,21 +50,19 @@ class LlamaBot extends AbstractAiBot
             $messages = [
                 [
                     'role' => 'system',
-                    'content' => 'You are a helpful and friendly assistant that always answers in a concise manner.
+                    'content' => 'You are a helpful and friendly assistant that always answers in a elaborate manner.
                     Ensure that you are not using any bad words or offensive language to answer.
                     Do not use more than 1000 words to answer any question.',
                 ],
                 [
                     'role' => 'user',
-                    'content' => "You are a helpful and friendly assistant that always answers in a concise manner.
-                    Ensure that you are not using any bad words or offensive language to answer.
-                    Answer to the question by the user: {$message}.
+                    'content' => "Answer to the question by the user: {$message}.
                     And the previous summary of the conversation is: {$conversation->summary}",
                 ],
             ];
 
             $stream = $this->getClient()->chat()->createStreamed([
-                'model' => 'deepseek-r1:8b',
+                'model' => 'gemma3:4b',
                 'messages' => $messages,
             ]);
 
