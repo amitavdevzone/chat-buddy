@@ -4,6 +4,7 @@ import 'highlight.js/styles/github-dark.css';
 import { BotMessageSquare, MoreVertical, Pencil, Send, Settings2, Trash2, UserCircle2 } from 'lucide-react';
 import MarkdownIt from 'markdown-it';
 import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { Conversation, Message } from '../../types';
 import ChatSettings from './chat-settings';
 import { useChatStore } from './chatstore';
 
@@ -18,33 +19,27 @@ const mdParser: any = new MarkdownIt({
   },
 });
 
-interface Message {
-  id: number;
-  sender: 'bot' | 'user';
-  text: string;
-}
-
-interface Conversation {
-  id: number;
-  title: string;
-  messages: Message[];
-}
-
 export default function ChatUI() {
   const [conversations, setConversations] = useState<Conversation[]>([
     {
       id: 1,
-      title: 'Weather Inquiry',
+      name: 'Weather Inquiry',
       messages: [
-        { id: 1, sender: 'bot', text: 'Hi! How can I help you today?' },
-        { id: 2, sender: 'user', text: 'What’s the weather like today?' },
-        { id: 3, sender: 'bot', text: 'I do not have access to a weather tool to answer that.' },
+        { id: 1, sender_type: 'agent', message: 'Hi! How can I help you today?', user_id: 1, conversation_id: 1 },
+        { id: 2, sender_type: 'user', message: 'What’s the weather like today?', user_id: 1, conversation_id: 1 },
+        { id: 3, sender_type: 'agent', message: 'I do not have access to a weather tool to answer that.', user_id: 1, conversation_id: 1 },
       ],
+      user_id: 0,
+      created_at: '',
+      updated_at: '',
     },
     {
       id: 2,
-      title: 'Joke Request',
-      messages: [{ id: 1, sender: 'bot', text: 'Sure, want to hear a joke?' }],
+      name: 'Joke Request',
+      messages: [{ id: 1, sender_type: 'agent', message: 'Sure, want to hear a joke?', user_id: 1, conversation_id: 2 }],
+      user_id: 0,
+      created_at: '',
+      updated_at: '',
     },
   ]);
 
@@ -69,8 +64,10 @@ export default function ChatUI() {
     if (!input.trim() || !currentConversation) return;
     const newMessage: Message = {
       id: currentConversation.messages.length + 1,
-      sender: 'user',
-      text: input,
+      sender_type: 'user',
+      message: input,
+      conversation_id: currentConversation.id,
+      user_id: 1,
     };
     const updatedConversations = conversations.map((conv) =>
       conv.id === selectedConversationId ? { ...conv, messages: [...conv.messages, newMessage] } : conv,
@@ -113,7 +110,7 @@ export default function ChatUI() {
             }`}
             onClick={() => setSelectedConversationId(conv.id)}
           >
-            <span className="w-36 truncate">{conv.title}</span>
+            <span className="w-36 truncate">{conv.name}</span>
             <div className="relative">
               <MoreVertical
                 size={16}
@@ -129,7 +126,7 @@ export default function ChatUI() {
                     className="flex cursor-pointer items-center px-3 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-600"
                     onClick={(e) => {
                       e.stopPropagation();
-                      const newTitle = prompt('Rename conversation', conv.title);
+                      const newTitle = prompt('Rename conversation', conv.name);
                       if (newTitle) renameConversation(conv.id, newTitle);
                       setDropdownOpenId(null);
                     }}
@@ -175,18 +172,18 @@ export default function ChatUI() {
         <div className="flex flex-1 flex-col">
           <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
             {currentConversation?.messages.map((msg) => (
-              <div key={msg.id} className={`flex ${msg.sender === 'user' ? 'justify-end' : 'justify-start'}`}>
-                {msg.sender === 'bot' ? (
+              <div key={msg.id} className={`flex ${msg.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}>
+                {msg.sender_type === 'agent' ? (
                   <div className="flex w-full items-start">
                     <BotMessageSquare className="mr-2 text-blue-500" size={28} />
                     <div
                       className="prose prose-sm dark:prose-invert w-full max-w-none rounded-lg border border-gray-200 bg-white p-3 px-6 text-sm text-gray-800 md:px-10 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
-                      dangerouslySetInnerHTML={{ __html: mdParser.render(msg.text) }}
+                      dangerouslySetInnerHTML={{ __html: mdParser.render(msg.message) }}
                     />
                   </div>
                 ) : (
                   <div className="flex w-1/2 items-end justify-end">
-                    <div className="w-full rounded-lg bg-blue-500 p-3 text-sm text-white">{msg.text}</div>
+                    <div className="w-full rounded-lg bg-blue-500 p-3 text-sm text-white">{msg.message}</div>
                     <UserCircle2 className="ml-2 text-gray-400" size={28} />
                   </div>
                 )}
