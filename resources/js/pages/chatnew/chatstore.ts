@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { Conversation } from '../../types';
 
 type ChatStore = {
   isSettingDrawerOpen: boolean;
@@ -9,6 +10,12 @@ type ChatStore = {
 
   selectedModel: string;
   setSelectedModel: (model: string) => void;
+
+  currentConversation: Conversation | null;
+  setCurrentConversation: (conversation: Conversation | null) => void;
+
+  conversations: Conversation[];
+  setConversations: (conversations: Conversation[]) => void;
 };
 
 export const useChatStore = create<ChatStore>((set) => ({
@@ -21,4 +28,10 @@ export const useChatStore = create<ChatStore>((set) => ({
   setSelectedModel: (model: string) => set({ selectedModel: model }),
 
   setModelList: (models: string[]) => set({ models: models }),
+
+  currentConversation: null,
+  setCurrentConversation: (conversation: Conversation | null) => set({ currentConversation: conversation }),
+
+  conversations: [],
+  setConversations: (conversations: Conversation[]) => set({ conversations: conversations }),
 }));

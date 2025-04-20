@@ -1,10 +1,11 @@
 // Full updated component with Shift+Enter support and textarea resizing
 import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
-import { BotMessageSquare, MoreVertical, Pencil, Send, Settings2, Trash2, UserCircle2 } from 'lucide-react';
+import { BotMessageSquare, MoreVertical, Pencil, Settings2, Trash2, UserCircle2 } from 'lucide-react';
 import MarkdownIt from 'markdown-it';
-import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
-import { Conversation, Message } from '../../types';
+import { useEffect, useState } from 'react';
+import { Conversation } from '../../types';
+import ChatBox from './chat-box';
 import ChatSettings from './chat-settings';
 import { useChatStore } from './chatstore';
 import ModelSelector from './model-selector';
@@ -23,7 +24,12 @@ const mdParser: any = new MarkdownIt({
 export default function ChatUI({ models, defaultModel }: { models: string[]; defaultModel: string }) {
   const setModelList = useChatStore((state) => state.setModelList);
   const setSelectedModel = useChatStore((state) => state.setSelectedModel);
-  const [conversations, setConversations] = useState<Conversation[]>([
+  const currentConversation = useChatStore((state) => state.currentConversation);
+  const setCurrentConversation = useChatStore((state) => state.setCurrentConversation);
+  const conversations = useChatStore((state) => state.conversations);
+  const setConversations = useChatStore((state) => state.setConversations);
+
+  const conversationData: Conversation[] = [
     {
       id: 1,
       name: 'Weather Inquiry',
@@ -44,55 +50,19 @@ export default function ChatUI({ models, defaultModel }: { models: string[]; def
       created_at: '',
       updated_at: '',
     },
-  ]);
+  ];
 
   const [selectedConversationId, setSelectedConversationId] = useState<number>(1);
-  const [input, setInput] = useState<string>('');
   const [dropdownOpenId, setDropdownOpenId] = useState<number | null>(null);
-  const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const toggleSettingDrawer = useChatStore((state) => state.toggleSettingDrawer);
 
   useEffect(() => {
     setSelectedModel(defaultModel);
     setModelList(models);
+    setConversations(conversationData);
+    setCurrentConversation(conversationData[0]);
   }, []);
-
-  useEffect(() => {
-    if (textareaRef.current) {
-      textareaRef.current.style.height = 'auto';
-      textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
-    }
-  }, [input]);
-
-  const currentConversation = conversations.find((c) => c.id === selectedConversationId);
-
-  const sendMessage = () => {
-    if (!input.trim() || !currentConversation) return;
-    const newMessage: Message = {
-      id: currentConversation.messages.length + 1,
-      sender_type: 'user',
-      message: input,
-      conversation_id: currentConversation.id,
-      user_id: 1,
-    };
-    const updatedConversations = conversations.map((conv) =>
-      conv.id === selectedConversationId ? { ...conv, messages: [...conv.messages, newMessage] } : conv,
-    );
-    setConversations(updatedConversations);
-    setInput('');
-  };
-
-  const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
-    if (e.key === 'Enter' && !e.shiftKey) {
-      e.preventDefault();
-      sendMessage();
-    }
-  };
-
-  const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
-  };
 
   const deleteConversation = (id: number) => {
     setConversations(conversations.filter((conv) => conv.id !== id));
@@ -115,7 +85,10 @@ export default function ChatUI({ models, defaultModel }: { models: string[]; def
             className={`flex cursor-pointer items-center justify-between rounded-md px-3 py-2 ${
               selectedConversationId === conv.id ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-700'
             }`}
-            onClick={() => setSelectedConversationId(conv.id)}
+            onClick={() => {
+              setSelectedConversationId(conv.id);
+              setCurrentConversation(conv);
+            }}
           >
             <span className="w-36 truncate">{conv.name}</span>
             <div className="relative">
@@ -190,22 +163,7 @@ export default function ChatUI({ models, defaultModel }: { models: string[]; def
             ))}
           </div>
 
-          <div className="border-t border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
-            <div className="flex items-end gap-2">
-              <textarea
-                ref={textareaRef}
-                value={input}
-                onChange={handleInput}
-                onKeyDown={handleKeyDown}
-                rows={1}
-                placeholder="Type your message..."
-                className="max-h-48 flex-1 resize-none overflow-auto rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-              />
-              <button onClick={sendMessage} className="h-fit rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600">
-                <Send size={18} />
-              </button>
-            </div>
-          </div>
+          <ChatBox />
         </div>
 
         <ChatSettings />
