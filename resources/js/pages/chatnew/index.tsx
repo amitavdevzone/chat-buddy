@@ -7,6 +7,7 @@ import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
 import { Conversation, Message } from '../../types';
 import ChatSettings from './chat-settings';
 import { useChatStore } from './chatstore';
+import ModelSelector from './model-selector';
 
 const mdParser: any = new MarkdownIt({
   highlight: function (str: string, lang: string) {
@@ -19,7 +20,9 @@ const mdParser: any = new MarkdownIt({
   },
 });
 
-export default function ChatUI() {
+export default function ChatUI({ models, defaultModel }: { models: string[]; defaultModel: string }) {
+  const setModelList = useChatStore((state) => state.setModelList);
+  const setSelectedModel = useChatStore((state) => state.setSelectedModel);
   const [conversations, setConversations] = useState<Conversation[]>([
     {
       id: 1,
@@ -45,11 +48,15 @@ export default function ChatUI() {
 
   const [selectedConversationId, setSelectedConversationId] = useState<number>(1);
   const [input, setInput] = useState<string>('');
-  const [selectedModel, setSelectedModel] = useState<string>('gpt-4');
   const [dropdownOpenId, setDropdownOpenId] = useState<number | null>(null);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
 
   const toggleSettingDrawer = useChatStore((state) => state.toggleSettingDrawer);
+
+  useEffect(() => {
+    setSelectedModel(defaultModel);
+    setModelList(models);
+  }, []);
 
   useEffect(() => {
     if (textareaRef.current) {
@@ -153,15 +160,7 @@ export default function ChatUI() {
       <div className="flex flex-1 flex-col">
         <div className="flex items-center justify-between border-b border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
           <div className="ml-auto flex items-center space-x-3">
-            <select
-              value={selectedModel}
-              onChange={(e) => setSelectedModel(e.target.value)}
-              className="rounded-md border border-gray-300 bg-white px-3 py-1 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
-            >
-              <option value="gpt-3.5">GPT-3.5</option>
-              <option value="gpt-4">GPT-4</option>
-              <option value="gpt-4-turbo">GPT-4 Turbo</option>
-            </select>
+            <ModelSelector />
             <Settings2
               className="cursor-pointer text-gray-600 hover:text-gray-800 dark:text-gray-300 dark:hover:text-white"
               onClick={() => toggleSettingDrawer()}
