@@ -9,7 +9,7 @@ import { useChatStore } from './chatstore';
 import ConversationList from './conversation-list';
 import ModelSelector from './model-selector';
 
-export default function ChatUI({ models, defaultModel }: { models: string[]; defaultModel: string }) {
+export default function ChatUI({ models, defaultModel, conversations }: { models: string[]; defaultModel: string; conversations: Conversation[] }) {
   const setModelList = useChatStore((state) => state.setModelList);
   const setSelectedModel = useChatStore((state) => state.setSelectedModel);
   const setCurrentConversation = useChatStore((state) => state.setCurrentConversation);
@@ -43,7 +43,7 @@ export default function ChatUI({ models, defaultModel }: { models: string[]; def
   useEffect(() => {
     setSelectedModel(defaultModel);
     setModelList(models);
-    setConversations(conversationData);
+    setConversations(conversations);
     setCurrentConversation(conversationData[0]);
   }, []);
 

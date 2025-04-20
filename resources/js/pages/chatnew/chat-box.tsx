@@ -54,7 +54,7 @@ export default function ChatBox() {
   };
 
   return (
-    <div className="border-t border-gray-200 bg-white px-6 py-4 dark:border-gray-700 dark:bg-gray-800">
+    <div className="sticky right-0 bottom-0 left-0 z-10 border-t border-gray-200 bg-white px-6 py-4 shadow-md dark:border-gray-700 dark:bg-gray-800">
       <div className="flex items-end gap-2">
         <textarea
           ref={textareaRef}
@@ -65,7 +65,11 @@ export default function ChatBox() {
           placeholder="Type your message..."
           className="max-h-48 flex-1 resize-none overflow-auto rounded-lg border border-gray-300 bg-white px-4 py-2 text-sm focus:ring-2 focus:ring-blue-500 focus:outline-none dark:border-gray-600 dark:bg-gray-700 dark:text-white"
         />
-        <button onClick={sendMessage} className="h-fit rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600">
+        <button
+          onClick={sendMessage}
+          className="h-fit rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:opacity-50"
+          disabled={!input.trim() || !currentConversation}
+        >
           <Send size={18} />
         </button>
       </div>

@@ -2,6 +2,7 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github-dark.css';
 import { BotMessageSquare, UserCircle2 } from 'lucide-react';
 import MarkdownIt from 'markdown-it';
+import { useEffect, useRef } from 'react';
 import { useChatStore } from './chatstore';
 
 const mdParser: any = new MarkdownIt({
@@ -17,8 +18,18 @@ const mdParser: any = new MarkdownIt({
 
 export function ChatMessages() {
   const currentConversation = useChatStore((state) => state.currentConversation);
+  const messagesEndRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    messagesEndRef.current?.scrollIntoView({ behavior: 'smooth' });
+  };
+
+  useEffect(() => {
+    scrollToBottom();
+  }, [currentConversation?.messages]);
+
   return (
-    <div className="flex-1 space-y-4 overflow-y-auto px-6 py-4">
+    <div className="flex-1 space-y-4 overflow-y-auto bg-gray-100 px-6 py-4">
       {currentConversation?.messages.map((msg) => (
         <div key={msg.id} className={`flex ${msg.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}>
           {msg.sender_type === 'agent' ? (
@@ -37,6 +48,7 @@ export function ChatMessages() {
           )}
         </div>
       ))}
+      <div ref={messagesEndRef} />
     </div>
   );
 }

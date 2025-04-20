@@ -19,19 +19,18 @@ class ConversationController extends Controller
         $tools = ['Web Search', 'Research'];
         $defaultModel = $models[0];
 
-        $conversation = Conversation::query()
-            ->where('id', 1)
+        $conversations = Conversation::query()
+            // ->where('id', 1)
             ->with(['messages' => function ($query) {
-                $query->orderByDesc('id')
-                    ->take(30);
+                $query->orderByDesc('id');
             }])
-            ->first();
+            ->get();
 
         return Inertia::render('chatnew/index', [
             'models' => $models,
             'tools' => $tools,
             'defaultModel' => $defaultModel,
-            'conversation' => $conversation,
+            'conversations' => $conversations,
         ]);
     }
 
