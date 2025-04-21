@@ -22,7 +22,7 @@ class ConversationController extends Controller
         $conversations = Conversation::query()
             // ->where('id', 1)
             ->with(['messages' => function ($query) {
-                $query->orderByDesc('id');
+                $query->orderByDesc('id')->limit(30);
             }])
             ->get();
 
