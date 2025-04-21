@@ -20,6 +20,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::get('conversation', [ConversationController::class, 'index'])->name('conversation.index');
+    Route::post('message', [ConversationController::class, 'store'])->name('message.store');
 
     Route::get('respond', [ConversationController::class, 'respond'])->name('message.response');
 
@@ -31,18 +32,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
-
-Route::post('message', function (Request $request, AiBotInterface $aiBot) {
-    $data = $request->validate([
-        'model' => 'required|string',
-        'message' => 'required|string',
-        'tool' => 'nullable|string',
-    ]);
-
-    Message::create([
-        'conversation_id' => 1,
-        'user_id' => auth()->user()->id,
-        'sender_type' => SenderType::USER->value,
-        'message' => $data['message'],
-    ]);
-})->name('message.store');

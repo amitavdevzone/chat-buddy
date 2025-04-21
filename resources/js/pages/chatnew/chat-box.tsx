@@ -1,7 +1,15 @@
+import { router, useForm } from '@inertiajs/react';
 import { Send } from 'lucide-react';
-import { ChangeEvent, KeyboardEvent, useEffect, useRef, useState } from 'react';
+import { ChangeEvent, KeyboardEvent, useEffect, useRef } from 'react';
 import { Message } from '../../types';
 import { useChatStore } from './chatstore';
+
+type MessageForm = {
+  conversation_id: number | null;
+  message: string;
+  sender_type: 'user' | 'assistant';
+  model: string;
+};
 
 export default function ChatBox() {
   const currentConversation = useChatStore((state) => state.currentConversation);
@@ -9,12 +17,23 @@ export default function ChatBox() {
   const conversations = useChatStore((state) => state.conversations);
   const setConversations = useChatStore((state) => state.setConversations);
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
-  const [input, setInput] = useState<string>('');
+  const selectedModel = useChatStore((state) => state.selectedModel);
+
+  useEffect(() => {
+    console.log('Selected model changed:', selectedModel);
+  }, [selectedModel]);
+
+  const { data, setData, post } = useForm<MessageForm>({
+    conversation_id: currentConversation?.id || null,
+    message: '',
+    sender_type: 'user',
+    model: selectedModel,
+  });
 
   const selectedConversationId = useChatStore((state) => state.currentConversation?.id);
 
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
-    setInput(e.target.value);
+    setData('message', e.target.value);
   };
 
   const handleKeyDown = (e: KeyboardEvent<HTMLTextAreaElement>) => {
@@ -29,28 +48,47 @@ export default function ChatBox() {
       textareaRef.current.style.height = 'auto';
       textareaRef.current.style.height = `${textareaRef.current.scrollHeight}px`;
     }
-  }, [input]);
+  }, [data.message]);
+
+  // Update form data when selectedModel changes
+  useEffect(() => {
+    setData('model', selectedModel);
+  }, [selectedModel, setData]);
 
   const sendMessage = () => {
-    if (!input.trim() || !currentConversation) return;
+    setData('model', selectedModel);
+
+    if (!data.message.trim() || !currentConversation) return;
+
+    // Create new message
     const newMessage: Message = {
-      id: currentConversation.messages.length + 1,
+      id: Date.now(),
       sender_type: 'user',
-      message: input,
+      message: data.message,
       conversation_id: currentConversation.id,
       user_id: 1,
     };
+
     const updatedConversations = conversations.map((conv) =>
-      conv.id === selectedConversationId ? { ...conv, messages: [...conv.messages, newMessage] } : conv,
+      conv.id === currentConversation.id ? { ...conv, messages: [...conv.messages, newMessage] } : conv,
     );
+
     setConversations(updatedConversations);
+    setCurrentConversation({
+      ...currentConversation,
+      messages: [...currentConversation.messages, newMessage],
+    });
 
-    const updatedCurrentConversation = updatedConversations.find((conv) => conv.id === selectedConversationId);
-    if (updatedCurrentConversation) {
-      setCurrentConversation(updatedCurrentConversation);
-    }
-
-    setInput('');
+    post(route('message.store'), {
+      preserveScroll: true,
+      onSuccess: () => {
+        setData('message', '');
+        router.reload({ only: ['conversation'] });
+      },
+      onError: (error) => {
+        console.error('Error sending message:', error);
+      },
+    });
   };
 
   return (
@@ -58,7 +96,7 @@ export default function ChatBox() {
       <div className="flex items-end gap-2">
         <textarea
           ref={textareaRef}
-          value={input}
+          value={data.message}
           onChange={handleInput}
           onKeyDown={handleKeyDown}
           rows={1}
@@ -68,7 +106,7 @@ export default function ChatBox() {
         <button
           onClick={sendMessage}
           className="h-fit rounded-full bg-blue-500 p-2 text-white hover:bg-blue-600 disabled:opacity-50"
-          disabled={!input.trim() || !currentConversation}
+          disabled={!data.message.trim() || !currentConversation}
         >
           <Send size={18} />
         </button>

@@ -34,7 +34,7 @@ class ConversationController extends Controller
         ]);
     }
 
-    public function store(Request $request, AiBotInterface $aiBot)
+    public function store(Request $request)
     {
         $data = $request->validate([
             'model' => 'required|string',
