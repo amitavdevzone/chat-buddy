@@ -8,7 +8,7 @@ export default function ConversationList() {
   const setCurrentConversation = useChatStore((state) => state.setCurrentConversation);
 
   const [dropdownOpenId, setDropdownOpenId] = useState<number | null>(null);
-  const [selectedConversationId, setSelectedConversationId] = useState<number>(1);
+  const [selectedConversationId, setSelectedConversationId] = useState<number | null>(null);
 
   const deleteConversation = (id: number) => {
     setConversations(conversations.filter((conv) => conv.id !== id));
@@ -19,6 +19,25 @@ export default function ConversationList() {
 
   const renameConversation = (id: number, newTitle: string) => {
     setConversations(conversations.map((conv) => (conv.id === id ? { ...conv, title: newTitle } : conv)));
+  };
+
+  const setSelectedConversation = (id: number) => {
+    // handle if the same conversation is selected again to deselect it
+    if (selectedConversationId === id) {
+      setSelectedConversationId(null);
+      setCurrentConversation(null);
+      return;
+    }
+
+    // this is to set the selected conversation
+    // if the conversation is not found, we can set it to null
+    const selectedConv = conversations.find((conv) => conv.id === id);
+    if (selectedConv) {
+      setSelectedConversationId(selectedConv.id);
+      setCurrentConversation(selectedConv);
+    } else {
+      console.log('Selected conversation not found');
+    }
   };
 
   return (
@@ -35,10 +54,7 @@ export default function ConversationList() {
               className={`flex cursor-pointer items-center justify-between rounded-md px-3 py-2 ${
                 selectedConversationId === conv.id ? 'bg-blue-100 dark:bg-blue-900' : 'hover:bg-gray-100 dark:hover:bg-gray-700'
               }`}
-              onClick={() => {
-                setSelectedConversationId(conv.id);
-                setCurrentConversation(conv);
-              }}
+              onClick={() => setSelectedConversation(conv.id)}
             >
               <span className="w-36 truncate">{conv.name}</span>
               <div className="relative">
