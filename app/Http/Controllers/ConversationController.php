@@ -38,12 +38,13 @@ class ConversationController extends Controller
     {
         $data = $request->validate([
             'model' => 'required|string',
+            'conversation_id' => 'required|numeric|exists:conversations,id',
             'message' => 'required|string',
             'tool' => 'nullable|string',
         ]);
 
         Message::create([
-            'conversation_id' => 1,
+            'conversation_id' => $data['conversation_id'],
             'user_id' => auth()->user()->id,
             'sender_type' => SenderType::USER->value,
             'message' => $data['message'],

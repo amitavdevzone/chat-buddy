@@ -24,13 +24,11 @@ export default function ChatBox() {
   }, [selectedModel]);
 
   const { data, setData, post } = useForm<MessageForm>({
-    conversation_id: currentConversation?.id || null,
+    conversation_id: null,
     message: '',
     sender_type: 'user',
     model: selectedModel,
   });
-
-  const selectedConversationId = useChatStore((state) => state.currentConversation?.id);
 
   const handleInput = (e: ChangeEvent<HTMLTextAreaElement>) => {
     setData('message', e.target.value);
@@ -53,9 +51,17 @@ export default function ChatBox() {
   // Update form data when selectedModel changes
   useEffect(() => {
     setData('model', selectedModel);
+    setData('conversation_id', currentConversation?.id || null);
   }, [selectedModel, setData]);
 
+  useEffect(() => {
+    if (currentConversation) {
+      setData('conversation_id', currentConversation.id);
+    }
+  }, [currentConversation]);
+
   const sendMessage = () => {
+    setData('model', selectedModel);
     setData('model', selectedModel);
 
     if (!data.message.trim() || !currentConversation) return;
