@@ -5,7 +5,7 @@
 
 /**
  * A helper file for Laravel, to provide autocomplete information to your IDE
- * Generated for Laravel 12.9.2.
+ * Generated for Laravel 12.10.0.
  *
  * This file should not be included in your code, only analyzed by your IDE!
  *
@@ -13169,7 +13169,7 @@ namespace Illuminate\Support\Facades {
          * @param string $key
          * @param int $maxAttempts
          * @param \Closure $callback
-         * @param int $decaySeconds
+         * @param \DateTimeInterface|\DateInterval|int $decaySeconds
          * @return mixed 
          * @static 
          */
@@ -13197,7 +13197,7 @@ namespace Illuminate\Support\Facades {
          * Increment (by 1) the counter for a given key for a given decay time.
          *
          * @param string $key
-         * @param int $decaySeconds
+         * @param \DateTimeInterface|\DateInterval|int $decaySeconds
          * @return int 
          * @static 
          */
@@ -13211,7 +13211,7 @@ namespace Illuminate\Support\Facades {
          * Increment the counter for a given key for a given decay time by a given amount.
          *
          * @param string $key
-         * @param int $decaySeconds
+         * @param \DateTimeInterface|\DateInterval|int $decaySeconds
          * @param int $amount
          * @return int 
          * @static 
@@ -13226,7 +13226,7 @@ namespace Illuminate\Support\Facades {
          * Decrement the counter for a given key for a given decay time by a given amount.
          *
          * @param string $key
-         * @param int $decaySeconds
+         * @param \DateTimeInterface|\DateInterval|int $decaySeconds
          * @param int $amount
          * @return int 
          * @static 
