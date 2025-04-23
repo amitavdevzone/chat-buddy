@@ -3,7 +3,6 @@ import { Settings2 } from 'lucide-react';
 import { useEffect } from 'react';
 import { Conversation } from '../../types';
 import ChatBox from './chat-box';
-import { ChatMessages } from './chat-messages';
 import ChatSettings from './chat-settings';
 import { useChatStore } from './chatstore';
 import ConversationList from './conversation-list';
@@ -42,7 +41,7 @@ export default function ChatUI({ models, defaultModel, conversations }: { models
         </div>
 
         <div className="flex flex-1 flex-col overflow-auto">
-          <ChatMessages />
+          {/* <ChatMessages /> */}
           <ChatBox />
         </div>
 
