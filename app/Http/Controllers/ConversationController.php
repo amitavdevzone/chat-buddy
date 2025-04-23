@@ -17,10 +17,9 @@ class ConversationController extends Controller
     {
         $models = $aiBot->getModels()->pluck('name')->toArray();
         $tools = ['Web Search', 'Research'];
-        $defaultModel = $models[0];
+        $defaultModel = $models[1];
 
         $conversations = Conversation::query()
-            // ->where('id', 1)
             ->with(['messages' => function ($query) {
                 $query->orderByDesc('id')->limit(30);
             }])
@@ -53,10 +52,13 @@ class ConversationController extends Controller
 
     public function respond(Request $request, AiBotInterface $aiBot): StreamedResponse
     {
-        $message = $request->input('message');
+        $data = $request->validate([
+            'message' => 'required|string',
+            'conversation_id' => 'required|numeric|exists:conversations,id',
+        ]);
 
-        $conversation = Conversation::find(1);
+        $conversation = Conversation::find($data['conversation_id']);
 
-        return $aiBot->getStreamedCompletion($message, $conversation);
+        return $aiBot->getStreamedCompletion($data['message'], $conversation);
     }
 }

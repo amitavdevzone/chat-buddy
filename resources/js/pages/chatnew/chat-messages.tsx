@@ -29,14 +29,18 @@ export function ChatMessages() {
     scrollToBottom();
   }, [currentConversation?.messages]);
 
+  // Sort messages by ID in ascending order (oldest first)
+  const sortedMessages = currentConversation?.messages ? [...currentConversation.messages].sort((a, b) => a.id - b.id) : [];
+
   return (
     <div className="flex-1 space-y-4 overflow-y-auto bg-gray-100 px-6 py-4">
       {currentConversation != null ? (
-        currentConversation?.messages.map((msg) => (
+        sortedMessages.map((msg) => (
           <div key={msg.id} className={`flex ${msg.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}>
             {msg.sender_type === 'agent' ? (
               <div className="flex w-full items-start">
                 <BotMessageSquare className="mr-2 text-blue-500" size={28} />
+                {msg.id}
                 <div
                   className="prose prose-sm dark:prose-invert w-full max-w-none rounded-lg border border-gray-200 bg-white p-3 px-6 text-sm text-gray-800 md:px-10 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                   dangerouslySetInnerHTML={{ __html: mdParser.render(msg.message) }}

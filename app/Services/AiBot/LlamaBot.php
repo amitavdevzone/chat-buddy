@@ -52,7 +52,7 @@ class LlamaBot extends AbstractAiBot
                     'role' => 'system',
                     'content' => 'You are a helpful and friendly assistant that always answers in a elaborate manner.
                     Ensure that you are not using any bad words or offensive language to answer.
-                    Do not use more than 1000 words to answer any question.',
+                    Do not use more than 20 words to answer any question.',
                 ],
                 [
                     'role' => 'user',
@@ -73,6 +73,7 @@ class LlamaBot extends AbstractAiBot
                 flush();
             }
 
+            echo "data: [DONE]\n\n";
             flush();
 
             Message::create([
