@@ -118,9 +118,9 @@ export default function ChatBox() {
     // Get the CURRENT state directly from the store to ensure we have latest messages
     const currentState = useChatStore.getState();
     const latestConversation = currentState.currentConversation;
-    
+
     if (!latestConversation) return;
-    
+
     console.log('Starting stream with conversation containing', latestConversation.messages.length, 'messages');
 
     // Create a new agent message immediately
@@ -147,19 +147,15 @@ export default function ChatBox() {
     // Update store directly first
     useChatStore.setState({
       currentConversation: updatedConversation,
-      conversations: currentState.conversations.map(conv => 
-        conv.id === updatedConversation.id ? updatedConversation : conv
-      )
+      conversations: currentState.conversations.map((conv) => (conv.id === updatedConversation.id ? updatedConversation : conv)),
     });
-    
+
     // Then update component state
     setCurrentConversation(updatedConversation);
-    setConversations(currentState.conversations.map(conv => 
-      conv.id === updatedConversation.id ? updatedConversation : conv
-    ));
-    
+    setConversations(currentState.conversations.map((conv) => (conv.id === updatedConversation.id ? updatedConversation : conv)));
+
     // Force immediate UI update
-    setStreamTick(prev => prev + 1);
+    setStreamTick((prev) => prev + 1);
 
     // Set a timeout for safety in case stream never completes
     const safetyTimeoutId = setTimeout(() => {
@@ -286,18 +282,12 @@ export default function ChatBox() {
     // Direct store update first for immediate global state change
     useChatStore.setState({
       currentConversation: updatedConversation,
-      conversations: conversations.map((conv) =>
-        conv.id === updatedConversation.id ? updatedConversation : conv
-      ),
+      conversations: conversations.map((conv) => (conv.id === updatedConversation.id ? updatedConversation : conv)),
     });
 
     // Then update component state
     setCurrentConversation(updatedConversation);
-    setConversations(
-      conversations.map((conv) =>
-        conv.id === updatedConversation.id ? updatedConversation : conv
-      )
-    );
+    setConversations(conversations.map((conv) => (conv.id === updatedConversation.id ? updatedConversation : conv)));
 
     // Force a re-render with the stream tick to make sure message is shown
     setStreamTick((prev) => prev + 1);
@@ -340,11 +330,7 @@ export default function ChatBox() {
           // Update store directly with the latest state
           useChatStore.setState({
             currentConversation: conversationWithServerIds,
-            conversations: currentState.conversations.map((conv) =>
-              conv.id === conversationWithServerIds.id
-                ? conversationWithServerIds
-                : conv
-            ),
+            conversations: currentState.conversations.map((conv) => (conv.id === conversationWithServerIds.id ? conversationWithServerIds : conv)),
           });
 
           // Update local component state too
@@ -353,10 +339,7 @@ export default function ChatBox() {
 
         // Double-check the state before starting the stream
         const finalState = useChatStore.getState();
-        console.log(
-          'State before starting stream:',
-          finalState.currentConversation
-        );
+        console.log('State before starting stream:', finalState.currentConversation);
 
         // Add a forced re-render before starting the stream
         setStreamTick((prev) => prev + 1);
@@ -365,11 +348,7 @@ export default function ChatBox() {
         setTimeout(() => {
           // Final verification of state before starting stream
           const verifiedState = useChatStore.getState();
-          console.log(
-            'Final verified state before stream:',
-            verifiedState.currentConversation?.messages?.length || 0,
-            'messages'
-          );
+          console.log('Final verified state before stream:', verifiedState.currentConversation?.messages?.length || 0, 'messages');
 
           // Start the EventSource to receive the streaming response
           startEventSource();
@@ -387,44 +366,27 @@ export default function ChatBox() {
         {currentConversation != null ? (
           <>
             {/* Debug info to show message count - remove in production */}
-            <div className="text-xs text-gray-400">
-              {sortedMessages.length} messages in conversation
-            </div>
+            <div className="text-xs text-gray-400">{sortedMessages.length} messages in conversation</div>
 
             {sortedMessages.map((msg) => (
-              <div
-                key={`${msg.id}-${streamTick}`}
-                className={`flex ${
-                  msg.sender_type === 'user' ? 'justify-end' : 'justify-start'
-                }`}
-              >
+              <div key={`${msg.id}-${streamTick}`} className={`flex ${msg.sender_type === 'user' ? 'justify-end' : 'justify-start'}`}>
                 {msg.sender_type === 'agent' ? (
                   <div className="flex w-full items-start">
-                    <BotMessageSquare
-                      className="mr-2 text-blue-500"
-                      size={28}
-                    />
+                    <BotMessageSquare className="mr-2 text-blue-500" size={28} />
                     <div
                       className="prose prose-sm dark:prose-invert w-full max-w-none rounded-lg border border-gray-200 bg-white p-3 px-6 text-sm text-gray-800 md:px-10 dark:border-gray-600 dark:bg-gray-700 dark:text-gray-100"
                       dangerouslySetInnerHTML={{
                         __html: mdParser.render(
                           // Use streamingContent for currently streaming message
-                          msg.id === agentMessageIdRef.current
-                            ? streamingContent
-                            : msg.message
+                          msg.id === agentMessageIdRef.current ? streamingContent : msg.message,
                         ),
                       }}
                     />
                   </div>
                 ) : (
                   <div className="flex w-1/2 items-end justify-end">
-                    <div className="w-full rounded-lg bg-blue-500 p-3 text-sm text-white">
-                      {msg.message}
-                    </div>
-                    <UserCircle2
-                      className="ml-2 text-gray-400"
-                      size={28}
-                    />
+                    <div className="w-full rounded-lg bg-blue-500 p-3 text-sm text-white">{msg.message}</div>
+                    <UserCircle2 className="ml-2 text-gray-400" size={28} />
                   </div>
                 )}
               </div>

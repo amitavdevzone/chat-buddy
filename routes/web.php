@@ -1,12 +1,9 @@
 <?php
 
-use App\Enums\SenderType;
 use App\Http\Controllers\ConversationController;
 use App\Http\Controllers\ModelFetchController;
 use App\Http\Controllers\ProviderController;
-use App\Models\Message;
-use App\Services\AiBot\AiBotInterface;
-use Illuminate\Http\Request;
+use App\Models\Conversation;
 use Illuminate\Support\Facades\Route;
 use Inertia\Inertia;
 
@@ -32,3 +29,26 @@ Route::middleware(['auth', 'verified'])->group(function () {
 
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
+
+Route::get('chat', function () {
+    $conversations = Conversation::query()
+        ->orderByDesc('updated_at')
+        ->get();
+
+    return Inertia::render('gpt/index', ['conversations' => $conversations]);
+})->name('chat');
+
+Route::get('chat/{conversation}', function (Conversation $conversation) {
+    $conversations = Conversation::query()
+        ->orderByDesc('updated_at')
+        ->get();
+
+    $conversation->load(['messages' => function ($query) {
+        $query->orderBy('created_at', 'desc')->limit(30);
+    }]);
+
+    return Inertia::render('gpt/conversation', [
+        'conversation' => $conversation,
+        'conversations' => $conversations,
+    ]);
+})->name('chat.conversation');
