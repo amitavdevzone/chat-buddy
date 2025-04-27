@@ -35,7 +35,7 @@ export default function ChatInterface({ conversations }: { conversations: Conver
         <TopBar />
 
         {/* Messages */}
-        <div className="flex-1 space-y-6 overflow-y-auto p-6">This is where the basic design will come.</div>
+        <div className="flex-1 space-y-6 overflow-y-auto p-24">This is where the basic design will come.</div>
 
         {/* Message Input */}
         <div className="border-t bg-white p-4">

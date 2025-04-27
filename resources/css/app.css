@@ -192,3 +192,20 @@
 .markdown-content p {
   margin-bottom: 0.75rem;
 }
+/* You could add this to your global CSS */
+.prose pre code {
+    white-space: pre-wrap !important;
+    word-break: break-word !important;
+}
+.prose code {
+    @apply bg-gray-200 inline-block p-1;
+}
+.prose p {
+margin-bottom: 0.75rem;
+}
+.prose p strong {
+    @apply inline-block mb-2 mt-4;
+}
+.prose ul li {
+    @apply list-disc list-inside mb-2;
+}

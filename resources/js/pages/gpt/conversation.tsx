@@ -2,7 +2,7 @@ import hljs from 'highlight.js';
 import 'highlight.js/styles/github.css'; // Highlight.js theme
 import MarkdownIt from 'markdown-it';
 import { useEffect, useRef, useState } from 'react';
-import { Conversation } from '../../types';
+import { Conversation, Message } from '../../types';
 import ConversationSidebar from './conversation-sidebar';
 import TopBar from './topbar';
 
@@ -17,17 +17,12 @@ const mdParser: MarkdownIt = new MarkdownIt({
   },
 });
 
-export default function ChatConversation({ conversations }: { conversations: Conversation[] }) {
-  const [messages, setMessages] = useState([
-    { id: 1, sender: 'user', text: 'Hello! **How are you?**' },
-    { id: 2, sender: 'assistant', text: "I'm good! Here's a code sample:\n\n```javascript\nconsole.log('Hello world');\n```" },
-  ]);
+export default function ChatConversation({ conversation, conversations }: { conversation: Conversation; conversations: Conversation[] }) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
   const handleSubmit = () => {
     if (!input.trim()) return;
-    setMessages((prev) => [...prev, { id: prev.length + 1, sender: 'user', text: input.trim() }]);
     setInput('');
   };
 
@@ -53,14 +48,18 @@ export default function ChatConversation({ conversations }: { conversations: Con
       <div className="flex flex-1 flex-col">
         <TopBar />
 
-        {/* Messages */}
-        <div className="flex-1 space-y-6 overflow-y-auto p-6">
-          {messages.map((msg) => (
-            <div key={msg.id} className="flex flex-col">
-              <div className="mb-1 text-sm font-bold">{msg.sender === 'user' ? 'You' : 'GPT-4o'}</div>
-              <div className="prose prose-sm max-w-none" dangerouslySetInnerHTML={{ __html: mdParser.render(msg.text) }} />
-            </div>
-          ))}
+        <div className="flex-1 space-y-6 p-24">
+          {conversation &&
+            conversation.messages.length > 0 &&
+            [...conversation.messages]
+              .sort((a, b) => a.id - b.id) // Sort messages by ID in ascending order
+              .map((message: Message) =>
+                message.sender_type === 'user' ? (
+                  <UserMessage key={message.id} message={message} />
+                ) : (
+                  <SystemMessage key={message.id} message={message} />
+                ),
+              )}
         </div>
 
         {/* Message Input */}
@@ -81,6 +80,24 @@ export default function ChatConversation({ conversations }: { conversations: Con
           </div>
         </div>
       </div>
+    </div>
+  );
+}
+
+export function UserMessage({ message }: { message: Message }) {
+  return (
+    <div key={message.id} className="ml-auto flex max-w-[50%] flex-col rounded-md border bg-gray-200 p-6 shadow">
+      <div className="mb-1 text-sm font-bold">{message.sender_type === 'user' ? 'You' : 'GPT-4o'}</div>
+      <div className="prose prose-sm max-w-none break-words" dangerouslySetInnerHTML={{ __html: mdParser.render(message.message) }} />
+    </div>
+  );
+}
+
+export function SystemMessage({ message }: { message: Message }) {
+  return (
+    <div key={message.id} className="mr-auto flex max-w-[80%] flex-col bg-white p-4">
+      <div className="mb-1 text-sm font-bold">{message.sender_type === 'user' ? 'You' : 'GPT-4o'}</div>
+      <div className="prose prose-sm max-w-none break-words" dangerouslySetInnerHTML={{ __html: mdParser.render(message.message) }} />
     </div>
   );
 }
