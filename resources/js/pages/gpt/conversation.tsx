@@ -20,6 +20,19 @@ const mdParser: MarkdownIt = new MarkdownIt({
 export default function ChatConversation({ conversation, conversations }: { conversation: Conversation; conversations: Conversation[] }) {
   const [input, setInput] = useState('');
   const textareaRef = useRef<HTMLTextAreaElement>(null);
+  const messagesContainerRef = useRef<HTMLDivElement>(null);
+
+  const scrollToBottom = () => {
+    if (messagesContainerRef.current) {
+      const container = messagesContainerRef.current;
+      const scrollOptions = {
+        top: container.scrollHeight,
+        behavior: 'smooth' as ScrollBehavior,
+      };
+
+      container.scrollTo(scrollOptions);
+    }
+  };
 
   const handleSubmit = () => {
     if (!input.trim()) return;
@@ -40,15 +53,20 @@ export default function ChatConversation({ conversation, conversations }: { conv
     }
   }, [input]);
 
+  // Scroll to bottom when component mounts or messages change
+  useEffect(() => {
+    scrollToBottom();
+  }, [conversation?.messages]);
+
   return (
     <div className="flex h-screen">
       <ConversationSidebar conversations={conversations} />
 
       {/* Main Chat Area */}
-      <div className="flex flex-1 flex-col">
+      <div className="relative flex flex-1 flex-col">
         <TopBar />
 
-        <div className="flex-1 space-y-6 p-24">
+        <div ref={messagesContainerRef} className="mb-16 flex-1 space-y-6 overflow-y-auto p-4 lg:p-8" style={{ scrollBehavior: 'smooth' }}>
           {conversation &&
             conversation.messages.length > 0 &&
             [...conversation.messages]
@@ -63,7 +81,7 @@ export default function ChatConversation({ conversation, conversations }: { conv
         </div>
 
         {/* Message Input */}
-        <div className="border-t bg-white p-4">
+        <div className="absolute right-0 bottom-0 left-0 border-t bg-white p-4 shadow-md">
           <div className="flex items-end space-x-2">
             <textarea
               ref={textareaRef}
@@ -87,7 +105,7 @@ export default function ChatConversation({ conversation, conversations }: { conv
 export function UserMessage({ message }: { message: Message }) {
   return (
     <div key={message.id} className="ml-auto flex max-w-[50%] flex-col rounded-md border bg-gray-200 p-6 shadow">
-      <div className="mb-1 text-sm font-bold">{message.sender_type === 'user' ? 'You' : 'GPT-4o'}</div>
+      <div className="mb-1 text-sm font-bold">You</div>
       <div className="prose prose-sm max-w-none break-words" dangerouslySetInnerHTML={{ __html: mdParser.render(message.message) }} />
     </div>
   );
@@ -96,7 +114,7 @@ export function UserMessage({ message }: { message: Message }) {
 export function SystemMessage({ message }: { message: Message }) {
   return (
     <div key={message.id} className="mr-auto flex max-w-[80%] flex-col bg-white p-4">
-      <div className="mb-1 text-sm font-bold">{message.sender_type === 'user' ? 'You' : 'GPT-4o'}</div>
+      <div className="mb-1 text-sm font-bold">Agent</div>
       <div className="prose prose-sm max-w-none break-words" dangerouslySetInnerHTML={{ __html: mdParser.render(message.message) }} />
     </div>
   );

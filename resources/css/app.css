@@ -198,14 +198,18 @@
     word-break: break-word !important;
 }
 .prose code {
-    @apply bg-gray-200 inline-block p-1;
+    @apply bg-gray-200 inline-block px-3;
 }
 .prose p {
-margin-bottom: 0.75rem;
+    @apply mt-8;
+    margin-bottom: 0.75rem;
 }
-.prose p strong {
-    @apply inline-block mb-2 mt-4;
+.prose p strong, .prose strong {
+    @apply inline-block mb-1 border-b border-gray-400;
+}
+.prose ul {
+    @apply pl-4;
 }
 .prose ul li {
-    @apply list-disc list-inside mb-2;
+    @apply list-disc mb-1;
 }

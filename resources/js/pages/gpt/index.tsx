@@ -31,14 +31,14 @@ export default function ChatInterface({ conversations }: { conversations: Conver
       <ConversationSidebar conversations={conversations} />
 
       {/* Main Chat Area */}
-      <div className="flex flex-1 flex-col">
+      <div className="relative flex flex-1 flex-col">
         <TopBar />
 
         {/* Messages */}
-        <div className="flex-1 space-y-6 overflow-y-auto p-24">This is where the basic design will come.</div>
+        <div className="flex-1 space-y-6 overflow-y-auto p-4 pb-24 md:p-6 lg:p-8">This is where the basic design will come.</div>
 
         {/* Message Input */}
-        <div className="border-t bg-white p-4">
+        <div className="absolute right-0 bottom-0 left-0 border-t bg-white p-4 shadow-md">
           <div className="flex items-end space-x-2">
             <textarea
               ref={textareaRef}
