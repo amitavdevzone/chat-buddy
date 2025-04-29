@@ -204,8 +204,11 @@
     @apply mt-8;
     margin-bottom: 0.75rem;
 }
+.prose.prose-message p {
+    @apply mt-1;
+}
 .prose p strong, .prose strong {
-    @apply inline-block mb-1 border-b border-gray-400;
+    @apply inline-block mb-1;
 }
 .prose ul {
     @apply pl-4;
