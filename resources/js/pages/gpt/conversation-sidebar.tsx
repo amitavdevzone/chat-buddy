@@ -6,7 +6,7 @@ export default function ConversationSidebar({ conversations = [] }: { conversati
     <div className="w-64 border-r bg-gray-100 p-4">
       <div className="mb-4 flex justify-between font-bold">
         <div>
-          <Link href={route('chat')} className="text-blue-500 hover:text-blue-700">
+          <Link href={route('conversation.index')} className="text-blue-500 hover:text-blue-700">
             My Chat
           </Link>
         </div>

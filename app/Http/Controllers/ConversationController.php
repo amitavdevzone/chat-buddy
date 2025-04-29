@@ -20,15 +20,29 @@ class ConversationController extends Controller
         $defaultModel = $models[1];
 
         $conversations = Conversation::query()
-            ->with(['messages' => function ($query) {
-                $query->orderByDesc('id')->limit(30);
-            }])
+            ->orderByDesc('updated_at')
             ->get();
 
-        return Inertia::render('chatnew/index', [
+        return Inertia::render('gpt/index', [
             'models' => $models,
             'tools' => $tools,
             'defaultModel' => $defaultModel,
+            'conversations' => $conversations,
+        ]);
+    }
+
+    public function show(Conversation $conversation)
+    {
+        $conversations = Conversation::query()
+            ->orderByDesc('updated_at')
+            ->get();
+
+        $conversation->load(['messages' => function ($query) {
+            $query->orderBy('created_at', 'desc')->limit(30);
+        }]);
+
+        return Inertia::render('gpt/conversation', [
+            'conversation' => $conversation,
             'conversations' => $conversations,
         ]);
     }

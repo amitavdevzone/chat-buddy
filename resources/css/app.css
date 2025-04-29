@@ -196,6 +196,7 @@
 .prose pre code {
     white-space: pre-wrap !important;
     word-break: break-word !important;
+    @apply p-4 w-full;
 }
 .prose code {
     @apply bg-gray-200 inline-block px-3;

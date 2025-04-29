@@ -7,6 +7,22 @@ import { Conversation, Message } from '../../types';
 import ConversationSidebar from './conversation-sidebar';
 import TopBar from './topbar';
 
+// Create a more forgiving markdown parser for streaming content
+const streamingMdParser: MarkdownIt = new MarkdownIt({
+  highlight: function (str, lang) {
+    if (lang && hljs.getLanguage(lang)) {
+      try {
+        return `<pre class="hljs"><code>${hljs.highlight(str, { language: lang }).value}</code></pre>`;
+      } catch (__) {}
+    }
+    return `<pre class="hljs"><code>${streamingMdParser.utils.escapeHtml(str)}</code></pre>`;
+  },
+  // Make it more forgiving for incomplete markdown
+  breaks: true,
+  typographer: true,
+});
+
+// Regular parser for complete messages
 const mdParser: MarkdownIt = new MarkdownIt({
   highlight: function (str, lang) {
     if (lang && hljs.getLanguage(lang)) {
@@ -17,6 +33,52 @@ const mdParser: MarkdownIt = new MarkdownIt({
     return `<pre class="hljs"><code>${mdParser.utils.escapeHtml(str)}</code></pre>`;
   },
 });
+
+// Helper function to intelligently fix incomplete markdown
+function preprocessMarkdown(text: string): string {
+  // Attempt to fix common incomplete markdown patterns
+
+  // Fix incomplete code blocks
+  const codeBlockMatches = text.match(/```([a-zA-Z0-9]*)\n(?:(?!```).)*$/s);
+  if (codeBlockMatches) {
+    text += '\n```';
+  }
+
+  // Fix incomplete bold/italic formatting
+  const boldCount = (text.match(/\*\*/g) || []).length;
+  if (boldCount % 2 !== 0) {
+    text += '**';
+  }
+
+  // Fix incomplete italic formatting
+  const italicCount = (text.match(/(?<!\*)\*(?!\*)/g) || []).length;
+  if (italicCount % 2 !== 0) {
+    text += '*';
+  }
+
+  // Fix incomplete links
+  if (text.match(/\[([^\]]+)\](?!\()/)) {
+    text += '()';
+  }
+
+  return text;
+}
+
+// Component for displaying streaming content with improved markdown rendering
+function StreamingMessage({ content }: { content: string }) {
+  // Preprocess the markdown to handle incomplete elements
+  const processedContent = preprocessMarkdown(content);
+
+  return (
+    <div className="mr-auto flex max-w-[80%] flex-col bg-white p-4">
+      <div className="mb-1 text-sm font-bold">Agent</div>
+      <div
+        className="prose prose-message prose-sm max-w-none break-words"
+        dangerouslySetInnerHTML={{ __html: streamingMdParser.render(processedContent) }}
+      />
+    </div>
+  );
+}
 
 type MessageForm = {
   model: string;
@@ -166,16 +228,8 @@ export default function ChatConversation({ conversation, conversations }: { conv
                 ),
               )}
 
-          {/* Show streaming message if active */}
-          {isStreaming && streamedMessage && (
-            <div className="mr-auto flex max-w-[80%] flex-col bg-white p-4">
-              <div className="mb-1 text-sm font-bold">Agent</div>
-              <div
-                className="prose prose-message prose-sm max-w-none break-words"
-                dangerouslySetInnerHTML={{ __html: mdParser.render(streamedMessage) }}
-              />
-            </div>
-          )}
+          {/* Show streaming message if active - use our improved component */}
+          {isStreaming && streamedMessage && <StreamingMessage content={streamedMessage} />}
         </div>
 
         {/* Message Input */}

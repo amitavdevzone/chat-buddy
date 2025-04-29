@@ -17,6 +17,7 @@ Route::middleware(['auth', 'verified'])->group(function () {
     })->name('dashboard');
 
     Route::get('conversation', [ConversationController::class, 'index'])->name('conversation.index');
+    Route::get('chat/{conversation}', [ConversationController::class, 'show'])->name('chat.conversation');
     Route::post('message', [ConversationController::class, 'store'])->name('message.store');
 
     Route::get('respond', [ConversationController::class, 'respond'])->name('message.response');
@@ -30,25 +31,3 @@ Route::middleware(['auth', 'verified'])->group(function () {
 require __DIR__.'/settings.php';
 require __DIR__.'/auth.php';
 
-Route::get('chat', function () {
-    $conversations = Conversation::query()
-        ->orderByDesc('updated_at')
-        ->get();
-
-    return Inertia::render('gpt/index', ['conversations' => $conversations]);
-})->name('chat');
-
-Route::get('chat/{conversation}', function (Conversation $conversation) {
-    $conversations = Conversation::query()
-        ->orderByDesc('updated_at')
-        ->get();
-
-    $conversation->load(['messages' => function ($query) {
-        $query->orderBy('created_at', 'desc')->limit(30);
-    }]);
-
-    return Inertia::render('gpt/conversation', [
-        'conversation' => $conversation,
-        'conversations' => $conversations,
-    ]);
-})->name('chat.conversation');

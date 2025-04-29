@@ -51,8 +51,7 @@ class LlamaBot extends AbstractAiBot
                 [
                     'role' => 'system',
                     'content' => 'You are a helpful and friendly assistant that always answers in a elaborate manner.
-                    Ensure that you are not using any bad words or offensive language to answer.
-                    Do not use more than 200 words to answer any question.',
+                    Ensure that you are not using any bad words or offensive language to answer.',
                 ],
                 [
                     'role' => 'user',
