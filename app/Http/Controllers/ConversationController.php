@@ -56,12 +56,14 @@ class ConversationController extends Controller
             'tool' => 'nullable|string',
         ]);
 
-        Message::create([
+        $message = Message::create([
             'conversation_id' => $data['conversation_id'],
             'user_id' => auth()->user()->id,
             'sender_type' => SenderType::USER->value,
             'message' => $data['message'],
         ]);
+
+        $message->conversation()->touch();
     }
 
     public function respond(Request $request, AiBotInterface $aiBot): StreamedResponse
@@ -73,6 +75,6 @@ class ConversationController extends Controller
 
         $conversation = Conversation::find($data['conversation_id']);
 
-        return $aiBot->getStreamedCompletion($data['message'], $conversation);
+        return $aiBot->getStreamedCompletion($data['message'], $conversation, 'gemma3:4b');
     }
 }

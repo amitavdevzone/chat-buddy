@@ -15,7 +15,7 @@ interface AiBotInterface
 
     public function getCompletion(string $model, string $message): array;
 
-    public function getStreamedCompletion(string $message, Conversation $conversation): StreamedResponse;
+    public function getStreamedCompletion(string $message, Conversation $conversation, string $model): StreamedResponse;
 
     public function getUsageData(array $response): array;
 

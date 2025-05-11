@@ -38,9 +38,9 @@ class LlamaBot extends AbstractAiBot
         }
     }
 
-    public function getStreamedCompletion(string $message, Conversation $conversation): StreamedResponse
+    public function getStreamedCompletion(string $message, Conversation $conversation, string $model): StreamedResponse
     {
-        return new StreamedResponse(function () use ($message, $conversation) {
+        return new StreamedResponse(function () use ($message, $conversation, $model) {
             set_time_limit(0);
             if (ob_get_level() == 0) {
                 ob_start();
@@ -76,7 +76,7 @@ class LlamaBot extends AbstractAiBot
             flush();
 
             Message::create([
-                'conversation_id' => 1,
+                'conversation_id' => $conversation->id,
                 'user_id' => auth()->user()->id,
                 'sender_type' => SenderType::AGENT->value,
                 'message' => $finalMessage,

@@ -62,7 +62,7 @@ abstract class AbstractAiBot implements AiBotInterface
         ];
     }
 
-    abstract public function getStreamedCompletion(string $message, Conversation $conversation): StreamedResponse;
+    abstract public function getStreamedCompletion(string $message, Conversation $conversation, string $model): StreamedResponse;
 
     abstract public function getUsageData(array $response): array;
 
